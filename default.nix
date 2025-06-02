@@ -7,7 +7,7 @@
     { }
 }:
 let
-  name = "groceries";
+  name = "lists";
 
   uvEnv = pkgs.uv-nix.mkEnv {
     inherit name; python = pkgs.python313;
