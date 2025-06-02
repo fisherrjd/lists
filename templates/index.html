@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Grocery Lists</title>
+    <style>
+        /* Base Reset & Mobile-First Foundation */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            line-height: 1.5;
+            padding: 1em;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            padding: 1em;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 0.5em;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 0.5em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        button {
+            width: 100%;
+            padding: 0.6em;
+            margin-top: 0.3em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        form.inline {
+            margin-bottom: 1em;
+        }
+
+        hr {
+            margin: 2em 0;
+        }
+
+        /* Main Container for Forms */
+        .form-group {
+            margin-bottom: 1em;
+        }
+
+        /* Responsive Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        th,
+        td {
+            padding: 0.8em;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #ecf0f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* FORM LAYOUT IMPROVEMENTS FOR DESKTOP */
+        @media (min-width: 769px) {
+            .form-row {
+                display: flex;
+                gap: 1em;
+            }
+
+            .form-row .form-group {
+                flex: 1;
+            }
+
+            /* Optional: Make Add Item form more compact */
+            form[action="/add"] .form-row {
+                flex-wrap: wrap;
+            }
+
+            form[action="/add"] .form-group {
+                min-width: 200px;
+            }
+
+            table {
+                margin-top: 1em;
+            }
+        }
+
+        /* MOBILE STYLES */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5em;
+            }
+
+            .container {
+                padding: 0.5em;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select,
+            button {
+                font-size: 1em;
+            }
+
+            /* Stack table rows as cards on mobile */
+            thead {
+                display: none;
+            }
+
+            tbody tr {
+                display: block;
+                background: #fff;
+                padding: 1em;
+                margin-bottom: 1em;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            tbody td {
+                display: block;
+                padding: 0.5em 0;
+                text-align: right;
+                position: relative;
+                padding-left: 45%;
+            }
+
+            tbody td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0.5em;
+                top: 0.5em;
+                font-weight: bold;
+                color: #555;
+                width: 40%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Grocery Lists</h1>
+        <form method="get" action="/" class="inline">
+            <div class="form-group">
+                <label for="listSelect">Select List:</label>
+                <select id="listSelect" name="list_name" onchange="this.form.submit()">
+                    {% for l in lists %}
+                    <option value="{{ l }}" {% if l == list_name %}selected{% endif %}>{{ l|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+        <form method="post" action="/create_list" class="inline">
+            <div class="form-group">
+                <label for="new_list_name">Create New List:</label>
+                <input type="text" id="new_list_name" name="new_list_name" placeholder="New list name" required>
+                <button type="submit">Create List</button>
+            </div>
+        </form>
+        {% if lists|length > 1 %}
+        <form method="post" action="/delete_list" class="inline" onsubmit="return confirm('Delete this list and all its items?');">
+            <div class="form-group">
+                <input type="hidden" name="delete_list_name" value="{{ list_name }}">
+                <button type="submit">Delete This List</button>
+            </div>
+        </form>
+        {% endif %}
+
+        <hr>
+
+        <h2>Add Item</h2>
+        <form method="post" action="/add">
+            <input type="hidden" name="list_name" value="{{ list_name }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="item_name">Name:</label>
+                    <input type="text" id="item_name" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="item_quantity">Quantity:</label>
+                    <input type="number" id="item_quantity" name="quantity" placeholder="Quantity" value="1" required>
+                </div>
+            </div>
+            <button type="submit">Add</button>
+        </form>
+
+        <h2>Items in {{ list_name|capitalize }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td data-label="ID">{{ item.id }}</td>
+                    <td data-label="Name">{{ item.name }}</td>
+                    <td data-label="Quantity">{{ item.quantity }}</td>
+                    <td data-label="Actions">
+                        <form method="post" action="/delete" style="display:inline;">
+                            <input type="hidden" name="list_name" value="{{ list_name }}">
+                            <input type="hidden" name="id" value="{{ item.id }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
