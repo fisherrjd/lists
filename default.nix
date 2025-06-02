@@ -7,7 +7,7 @@
     { }
 }:
 let
-  name = "lists";
+  name = "lists_api";
 
   uvEnv = pkgs.uv-nix.mkEnv {
     inherit name; python = pkgs.python313;

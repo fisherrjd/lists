@@ -9,7 +9,10 @@ class GroceryItem(BaseModel):
     id: int
     name: str
     quantity: int
-
+    
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
 
 if __name__ == "__main__":
     import uvicorn

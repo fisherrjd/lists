@@ -1,5 +1,5 @@
 [project]
-name = "lists"
+name = "lists_api"
 version = "0.1.0"
 description = "Lists for TODO's Tasks etc etc!"
 readme = "README.md"
