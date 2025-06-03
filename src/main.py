@@ -1,12 +1,12 @@
-from fastapi import FastAPI, HTTPException, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-from typing import List, Dict
+# main.py
 
+from fastapi import FastAPI
+from routes import router  # Import the router from routes.py
+
+#init api stuff
 app = FastAPI()
-    
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(router)
+
 
 if __name__ == "__main__":
     import uvicorn
