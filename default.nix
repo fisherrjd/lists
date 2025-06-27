@@ -16,7 +16,7 @@ let
       nixup
     ];
     java = [
-      gradle
+      maven
       zulu
     ];
     scripts = pkgs.lib.attrsets.attrValues scripts;
