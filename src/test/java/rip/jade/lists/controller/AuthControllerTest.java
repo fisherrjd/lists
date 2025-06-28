@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import rip.jade.lists.dto.UserResponse;
@@ -20,6 +21,12 @@ class AuthControllerTest {
 
     @MockitoBean
     private rip.jade.lists.service.UserService userService;
+    @MockitoBean
+    private rip.jade.lists.service.AuthSerivce authSerivce;
+    @MockitoBean
+    private rip.jade.lists.util.JwtUtil jwtUtil;
+    @MockitoBean
+    private rip.jade.lists.repository.UserRepository userRepository;
 
     @Test
     void testAuthControllerTestEndpoint() throws Exception {
@@ -53,15 +60,28 @@ class AuthControllerTest {
 
     @Test
     void testLogin() throws Exception {
-        mockMvc.perform(post("/auth/login"))
+        String json = "{" +
+                "\"username\": \"testuser\"," +
+                "\"password\": \"Password1!\"}";
+        rip.jade.lists.dto.AuthResponse mockAuthResponse = new rip.jade.lists.dto.AuthResponse();
+        mockAuthResponse.setToken("mock-token");
+        mockAuthResponse.setUsername("testuser");
+        mockAuthResponse.setEmail("testuser@email.com");
+        org.mockito.Mockito.when(authSerivce.authenticateUser(org.mockito.Mockito.any())).thenReturn(mockAuthResponse);
+
+        mockMvc.perform(post("/auth/login")
+                .contentType("application/json")
+                .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("User registered!"));
+                .andExpect(jsonPath("$.token").value("mock-token"))
+                .andExpect(jsonPath("$.username").value("testuser"))
+                .andExpect(jsonPath("$.email").value("testuser@email.com"));
     }
 
     @Test
     void testLogout() throws Exception {
         mockMvc.perform(post("/auth/logout"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("User registered!"));
+                .andExpect(content().string("User logged out!"));
     }
 }
