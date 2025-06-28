@@ -15,7 +15,6 @@ jobs:
         env:
           POSTGRES_DB: lists
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: temp_pass
         ports:
           - 5432:5432
         options: >-
@@ -30,9 +29,10 @@ jobs:
           - 6379:6379
 
     env:
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
 
     steps:
       - uses: actions/checkout@v4
