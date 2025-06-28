@@ -13,7 +13,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/test").permitAll()
+                        .requestMatchers(
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/logout",
+                                "/auth/test")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(httpBasic -> {
                 }); // or .formLogin(form -> {}) if you use forms

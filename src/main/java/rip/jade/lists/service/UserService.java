@@ -92,24 +92,6 @@ public class UserService {
     }
 
     /**
-     * Handles password reset or update.
-     * Implementation: Validate, hash new password, update in DB.
-     * Should move to AuthService or PasswordService
-     */
-    public void resetPassword(String email, String newPassword) {
-        // TODO: Implement password reset logic
-    }
-
-    /**
-     * Logs out a user (if using sessions or tokens).
-     * Implementation: Invalidate session or token.
-     * Should move to AuthService
-     */
-    public void logoutUser(String token) {
-        // TODO: Implement logout logic
-    }
-
-    /**
      * Assigns roles or permissions to a user.
      * Implementation: Update user roles in DB.
      * Should move to RoleService or UserRoleService
