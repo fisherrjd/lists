@@ -29,8 +29,8 @@ public class AuthController {
     }
 
     @GetMapping("/test")
-    public String test() {
-        return "AuthController is working!";
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok().body(new java.util.HashMap<>());
     }
 
     @PostMapping("/register")
