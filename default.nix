@@ -14,6 +14,7 @@ let
     cli = [
       jfmt
       nixup
+      redis
     ];
     java = [
       maven
