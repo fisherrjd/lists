@@ -33,7 +33,6 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
-
     steps:
       - uses: actions/checkout@v4
 
