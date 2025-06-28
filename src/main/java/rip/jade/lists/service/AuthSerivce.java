@@ -56,7 +56,13 @@ public class AuthSerivce {
      * * 3. (Optional) Clean up any user-specific resources.
      */
     public void logoutUser(String token) {
-        // Add the token to Redis with its expiry
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("Token is missing");
+        }
+        // Remove possible Bearer prefix if present (defensive)
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         long expiryMillis = jwtUtil.extractAllClaims(token).getExpiration().getTime() - System.currentTimeMillis();
         if (expiryMillis > 0) {
             redisTemplate.opsForValue().set(token, "blacklisted", expiryMillis, TimeUnit.MILLISECONDS);

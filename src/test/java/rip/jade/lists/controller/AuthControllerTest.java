@@ -80,7 +80,10 @@ class AuthControllerTest {
 
     @Test
     void testLogout() throws Exception {
-        mockMvc.perform(post("/auth/logout"))
+        org.mockito.Mockito.doNothing().when(authSerivce).logoutUser(org.mockito.Mockito.anyString());
+        String token = "mock-token";
+        mockMvc.perform(post("/auth/logout")
+                .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User logged out!"));
     }

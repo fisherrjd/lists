@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
@@ -55,8 +56,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public String logout() {
-        // Logout logic goes here
-        return "User logged out!";
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            authSerivce.logoutUser(token);
+            return ResponseEntity.ok("User logged out!");
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse(e.getMessage(), "LOGOUT_ERROR");
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 }
