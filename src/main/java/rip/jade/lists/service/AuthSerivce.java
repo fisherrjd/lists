@@ -2,6 +2,8 @@ package rip.jade.lists.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import java.util.concurrent.TimeUnit;
 
 import rip.jade.lists.dto.AuthResponse;
 import rip.jade.lists.dto.LoginRequest;
@@ -11,9 +13,6 @@ import rip.jade.lists.dto.UserResponse;
 import rip.jade.lists.dto.UserUpdateRequest;
 import rip.jade.lists.model.User;
 import rip.jade.lists.util.JwtUtil;
-import rip.jade.lists.repository.BlacklistedTokenRepository;
-import rip.jade.lists.model.BlacklistedToken;
-import java.util.Date;
 
 @Service
 public class AuthSerivce {
@@ -21,14 +20,14 @@ public class AuthSerivce {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final BlacklistedTokenRepository blacklistedTokenRepository;
+    private final StringRedisTemplate redisTemplate;
 
     public AuthSerivce(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
-            BlacklistedTokenRepository blacklistedTokenRepository) {
+            StringRedisTemplate redisTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        this.blacklistedTokenRepository = blacklistedTokenRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -57,14 +56,15 @@ public class AuthSerivce {
      * * 3. (Optional) Clean up any user-specific resources.
      */
     public void logoutUser(String token) {
-        // Add the token to the blacklist with its expiry date
-        Date expiry = jwtUtil.extractAllClaims(token).getExpiration();
-        BlacklistedToken blacklistedToken = new BlacklistedToken(token, expiry);
-        blacklistedTokenRepository.save(blacklistedToken);
+        // Add the token to Redis with its expiry
+        long expiryMillis = jwtUtil.extractAllClaims(token).getExpiration().getTime() - System.currentTimeMillis();
+        if (expiryMillis > 0) {
+            redisTemplate.opsForValue().set(token, "blacklisted", expiryMillis, TimeUnit.MILLISECONDS);
+        }
     }
 
     public boolean isTokenBlacklisted(String token) {
-        return blacklistedTokenRepository.existsByToken(token);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
     /**
