@@ -2,41 +2,72 @@ package rip.jade.lists.service;
 
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import rip.jade.lists.dto.LoginRequest;
 import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.dto.UserResponse;
 import rip.jade.lists.dto.UserUpdateRequest;
+import rip.jade.lists.model.User;
+import rip.jade.lists.repository.UserRepository;
 
 @Service
 public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Registers a new user.
      * Implementation: Validate input, hash password, save user to DB.
      */
-    public void registerUser(RegisterRequest request) {
-        // 1. Validate input (e.g., check for null/empty fields, valid email format)
-        // 2. Check if username or email already exists in the database
-        // 3. Hash the password securely (e.g., using BCrypt)
-        // 4. Create a new User entity and set its fields from the request
-        // 5. Assign a new UUID as the user's ID (if not auto-generated)
-        // 6. Save the new user entity using userRepository.save(user)
-        // 7. (Optional) Send a verification email or welcome message
-        // 8. (Optional) Handle exceptions and return appropriate responses
+    public UserResponse registerUser(RegisterRequest request) {
+        validateRegisterRequest(request);
+        User user = createUserFromRequest(request);
+        userRepository.save(user);
+        return mapToUserResponse(user);
     }
 
-    /**
-     * Authenticates a user (login).
-     * Implementation: Verify credentials, return token/session if valid.
-     */
-    public void authenticateUser(LoginRequest request) {
-        // TODO: Implement authentication logic
+    private void validateRegisterRequest(RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()) != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.findByEmail(request.getEmail()) != null) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
+    private User createUserFromRequest(RegisterRequest request) {
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setId(UUID.randomUUID());
+        return user;
+    }
+
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
+    private UserResponse mapToUserResponse(User user) {
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        return response;
+
+        // 7. (TODO) Send a verification email or welcome message
+        // 8. (TODO) Handle exceptions
     }
 
     /**
      * Retrieves user details by username or ID.
      * Implementation: Query user repository for user info.
+     * Should stay in UserService
      */
     public void getUserById(UUID id) {
         // TODO: Implement user retrieval logic
@@ -45,6 +76,7 @@ public class UserService {
     /**
      * Updates user profile information.
      * Implementation: Validate and update user fields in DB.
+     * Should stay in UserService
      */
     public void updateUser(UUID id, UserUpdateRequest user) {
         // TODO: Implement user update logic
@@ -53,30 +85,16 @@ public class UserService {
     /**
      * Deletes or deactivates a user account.
      * Implementation: Remove or deactivate user in DB.
+     * Should stay in UserService
      */
     public void deleteUser(UUID id) {
         // TODO: Implement user deletion logic
     }
 
     /**
-     * Handles password reset or update.
-     * Implementation: Validate, hash new password, update in DB.
-     */
-    public void resetPassword(String email, String newPassword) {
-        // TODO: Implement password reset logic
-    }
-
-    /**
-     * Logs out a user (if using sessions or tokens).
-     * Implementation: Invalidate session or token.
-     */
-    public void logoutUser(String token) {
-        // TODO: Implement logout logic
-    }
-
-    /**
      * Assigns roles or permissions to a user.
      * Implementation: Update user roles in DB.
+     * Should move to RoleService or UserRoleService
      */
     public void assignRoleToUser(UUID userId, String role) {
         // TODO: Implement role assignment logic
@@ -85,6 +103,7 @@ public class UserService {
     /**
      * Sends email verification to user (optional).
      * Implementation: Generate token, send email with verification link.
+     * Should move to EmailService
      */
     public void sendEmailVerification(String email) {
         // TODO: Implement email verification logic
@@ -93,6 +112,7 @@ public class UserService {
     /**
      * Locks or unlocks a user account (optional).
      * Implementation: Update user status in DB.
+     * Should move to AccountService
      */
     public void lockUserAccount(UUID userId) {
         // TODO: Implement account locking logic

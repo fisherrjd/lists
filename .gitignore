@@ -1,6 +1,7 @@
 .db
 .direnv
 result*
+.env
 
 HELP.md
 target/
