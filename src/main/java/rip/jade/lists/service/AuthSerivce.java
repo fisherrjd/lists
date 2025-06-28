@@ -1,22 +1,52 @@
 package rip.jade.lists.service;
 
-import rip.jade.lists.dto.LoginRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+import rip.jade.lists.dto.AuthResponse;
+import rip.jade.lists.dto.LoginRequest;
+import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.repository.UserRepository;
+import rip.jade.lists.dto.UserResponse;
+import rip.jade.lists.dto.UserUpdateRequest;
+import rip.jade.lists.model.User;
+import rip.jade.lists.util.JwtUtil;
+import rip.jade.lists.repository.BlacklistedTokenRepository;
+import rip.jade.lists.model.BlacklistedToken;
+import java.util.Date;
+
+@Service
 public class AuthSerivce {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
+
+    public AuthSerivce(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+            BlacklistedTokenRepository blacklistedTokenRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
+    }
 
     /**
      * Authenticates a user (login).
      * Steps:
-     * 1. Retrieve user by username/email from DB.
-     * 2. If user not found, throw authentication exception.
-     * 3. Verify password matches (use password encoder).
-     * 4. If password invalid, throw authentication exception.
      * 5. (Optional) Check if user is locked/disabled.
-     * 6. Generate and return authentication token/session (JWT or session ID).
      * 7. (Optional) Log login event.
      */
-    public void authenticateUser(LoginRequest request) {
-        // TODO: Implement authentication logic
+    public AuthResponse authenticateUser(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername());
+        if (user == null) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+        String token = jwtUtil.generateToken(user.getUsername());
+        return new AuthResponse(token, user.getUsername(), user.getEmail());
     }
 
     /**
@@ -24,10 +54,17 @@ public class AuthSerivce {
      * Steps:
      * 1. Invalidate session or token (remove from store or add to blacklist).
      * 2. (Optional) Log logout event.
-     * 3. (Optional) Clean up any user-specific resources.
+     * * 3. (Optional) Clean up any user-specific resources.
      */
     public void logoutUser(String token) {
-        // TODO: Implement logout logic
+        // Add the token to the blacklist with its expiry date
+        Date expiry = jwtUtil.extractAllClaims(token).getExpiration();
+        BlacklistedToken blacklistedToken = new BlacklistedToken(token, expiry);
+        blacklistedTokenRepository.save(blacklistedToken);
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        return blacklistedTokenRepository.existsByToken(token);
     }
 
     /**

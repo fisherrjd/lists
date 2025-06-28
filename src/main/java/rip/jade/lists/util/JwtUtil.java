@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
+    // TODO Hide this
     private final String SECRET_KEY = "replace_this_with_a_strong_secret";
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
 
@@ -28,7 +29,7 @@ public class JwtUtil {
         return !extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
