@@ -16,9 +16,8 @@ public class User {
     @Id
     private UUID id;
     private String username;
-    private String password; // Handle Hashing?
+    private String password; // Handle Hashing? TODO
     private String email;
 
-    // GOOGLE ID: google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth
-    // integration
+    // GOOGLE ID: google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth TODO
 }

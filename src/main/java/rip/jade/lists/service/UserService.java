@@ -1,10 +1,14 @@
 package rip.jade.lists.service;
 
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import rip.jade.lists.dto.LoginRequest;
 import rip.jade.lists.dto.RegisterRequest;
 import rip.jade.lists.dto.UserUpdateRequest;
 
+@Service
 public class UserService {
 
     /**
@@ -12,7 +16,6 @@ public class UserService {
      * Implementation: Validate input, hash password, save user to DB.
      */
     public void registerUser(RegisterRequest request) {
-
         // 1. Validate input (e.g., check for null/empty fields, valid email format)
         // 2. Check if username or email already exists in the database
         // 3. Hash the password securely (e.g., using BCrypt)
