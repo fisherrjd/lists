@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.dto.UserResponse;
 import rip.jade.lists.service.UserService;
 
 @RestController
@@ -26,9 +27,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        userService.registerUser(request);
-        return ResponseEntity.ok("User registered!");
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+        UserResponse userResponse = userService.registerUser(request);
+        return ResponseEntity.ok(userResponse);
     }
 
     @PostMapping("/login")

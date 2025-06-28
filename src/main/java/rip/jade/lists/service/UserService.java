@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import rip.jade.lists.dto.LoginRequest;
 import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.dto.UserResponse;
 import rip.jade.lists.dto.UserUpdateRequest;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
@@ -26,39 +26,48 @@ public class UserService {
      * Registers a new user.
      * Implementation: Validate input, hash password, save user to DB.
      */
-    public void registerUser(RegisterRequest request) {
+    public UserResponse registerUser(RegisterRequest request) {
+        validateRegisterRequest(request);
+        User user = createUserFromRequest(request);
+        userRepository.save(user);
+        return mapToUserResponse(user);
+    }
 
+    private void validateRegisterRequest(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()) != null) {
             throw new IllegalArgumentException("Username already exists");
         }
         if (userRepository.findByEmail(request.getEmail()) != null) {
             throw new IllegalArgumentException("Email already exists");
         }
+    }
 
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-
+    private User createUserFromRequest(RegisterRequest request) {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
-        user.setPassword(hashedPassword);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setId(UUID.randomUUID());
-        userRepository.save(user);
-
-        // 7. (TODO) Send a verification email or welcome message
-        // 8. (TODO) Handle exceptions and return appropriate responses
+        return user;
     }
 
-    /**
-     * Authenticates a user (login).
-     * Implementation: Verify credentials, return token/session if valid.
-     */
-    public void authenticateUser(LoginRequest request) {
-        // TODO: Implement authentication logic
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
+    private UserResponse mapToUserResponse(User user) {
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        return response;
+
+        // 7. (TODO) Send a verification email or welcome message
+        // 8. (TODO) Handle exceptions
     }
 
     /**
      * Retrieves user details by username or ID.
      * Implementation: Query user repository for user info.
+     * Should stay in UserService
      */
     public void getUserById(UUID id) {
         // TODO: Implement user retrieval logic
@@ -67,6 +76,7 @@ public class UserService {
     /**
      * Updates user profile information.
      * Implementation: Validate and update user fields in DB.
+     * Should stay in UserService
      */
     public void updateUser(UUID id, UserUpdateRequest user) {
         // TODO: Implement user update logic
@@ -75,6 +85,7 @@ public class UserService {
     /**
      * Deletes or deactivates a user account.
      * Implementation: Remove or deactivate user in DB.
+     * Should stay in UserService
      */
     public void deleteUser(UUID id) {
         // TODO: Implement user deletion logic
@@ -83,6 +94,7 @@ public class UserService {
     /**
      * Handles password reset or update.
      * Implementation: Validate, hash new password, update in DB.
+     * Should move to AuthService or PasswordService
      */
     public void resetPassword(String email, String newPassword) {
         // TODO: Implement password reset logic
@@ -91,6 +103,7 @@ public class UserService {
     /**
      * Logs out a user (if using sessions or tokens).
      * Implementation: Invalidate session or token.
+     * Should move to AuthService
      */
     public void logoutUser(String token) {
         // TODO: Implement logout logic
@@ -99,6 +112,7 @@ public class UserService {
     /**
      * Assigns roles or permissions to a user.
      * Implementation: Update user roles in DB.
+     * Should move to RoleService or UserRoleService
      */
     public void assignRoleToUser(UUID userId, String role) {
         // TODO: Implement role assignment logic
@@ -107,6 +121,7 @@ public class UserService {
     /**
      * Sends email verification to user (optional).
      * Implementation: Generate token, send email with verification link.
+     * Should move to EmailService
      */
     public void sendEmailVerification(String email) {
         // TODO: Implement email verification logic
@@ -115,6 +130,7 @@ public class UserService {
     /**
      * Locks or unlocks a user account (optional).
      * Implementation: Update user status in DB.
+     * Should move to AccountService
      */
     public void lockUserAccount(UUID userId) {
         // TODO: Implement account locking logic
