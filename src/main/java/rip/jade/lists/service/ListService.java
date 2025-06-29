@@ -11,14 +11,17 @@ import rip.jade.lists.model.TaskList;
 import rip.jade.lists.repository.ListRepository;
 import rip.jade.lists.exception.ResourceNotFoundException;
 import rip.jade.lists.model.User;
+import rip.jade.lists.repository.UserRepository;
 
 @Service
 public class ListService {
 
     private final ListRepository listRepository;
+    private final UserRepository userRepository;
 
-    ListService(ListRepository listRepository) {
+    public ListService(ListRepository listRepository, UserRepository userRepository) {
         this.listRepository = listRepository;
+        this.userRepository = userRepository;
     }
 
     public ListResponse createList(CreateListRequest request, User ownerUser) {
@@ -55,5 +58,24 @@ public class ListService {
         TaskList taskList = listRepository.findById(UUID.fromString(listId))
                 .orElseThrow(() -> new ResourceNotFoundException("List not found"));
         return mapToListResponse(taskList);
+    }
+
+    public void deleteList(String listId) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        // Remove this list from each user's authorizedLists
+        if (taskList.getAuthorizedUsers() != null) {
+            for (User user : taskList.getAuthorizedUsers()) {
+                // Fetch user with authorizedLists initialized
+                User managedUser = userRepository.findByIdWithAuthorizedLists(user.getId())
+                        .orElse(user);
+                if (managedUser.getAuthorizedLists() != null) {
+                    managedUser.getAuthorizedLists().remove(taskList);
+                }
+            }
+            // Remove all users from the list
+            taskList.getAuthorizedUsers().clear();
+        }
+        listRepository.delete(taskList);
     }
 }

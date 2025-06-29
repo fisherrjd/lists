@@ -75,8 +75,8 @@ public class ListController {
 
     @DeleteMapping("/{listId}")
     public ResponseEntity<?> deleteList(@PathVariable String listId) {
-        return ResponseEntity.ok().body("103 ListId: " + listId);
-
+        listService.deleteList(listId);
+        return ResponseEntity.ok().body("List deleted successfully");
     }
 
 }
