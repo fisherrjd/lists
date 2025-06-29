@@ -22,13 +22,14 @@ public class ListService {
     }
 
     public ListResponse createList(CreateListRequest request) {
-        validateListRequest(request);
         TaskList taskList = createTaskListFromRequest(request);
         ListResponse response = mapToListResponse(taskList);
         listRepository.save(taskList);
         return response;
     }
 
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
     public TaskList createTaskListFromRequest(CreateListRequest request) {
         TaskList taskList = new TaskList();
         taskList.setName(request.getName());
