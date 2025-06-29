@@ -2,10 +2,9 @@ package rip.jade.lists.repository;
 
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
-import rip.jade.lists.model.User;
 
-public interface ListRepository extends JpaRepository<User, UUID> {
-    User findByUsername(String username);
+import rip.jade.lists.model.TaskList;
 
-    User findByEmail(String email);
+public interface ListRepository extends JpaRepository<TaskList, UUID> {
+
 }
