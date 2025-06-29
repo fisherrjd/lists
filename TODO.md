@@ -15,31 +15,31 @@
     - [x] Test environment setup with `nix develop` and `uv` commands
 
 2. **Database Models**
-    - [ ] Design database schema (users, lists, tasks, list_shares)
-    - [ ] Implement `User` model (`models/user.py`)
-        - [ ] Fields: id, email, hashed_password, created_at
-        - [ ] Add SQLAlchemy model class
-        - [ ] Add relationships to lists and shares
-    - [ ] Implement `List` model (`models/list.py`)
-        - [ ] Fields: id, title, owner_id, created_at, updated_at
-        - [ ] Add SQLAlchemy model class
-        - [ ] Add relationship to tasks and owner
-    - [ ] Implement `Task` model (`models/task.py`)
-        - [ ] Fields: id, list_id, title, completed, created_at, updated_at
-        - [ ] Add SQLAlchemy model class
-        - [ ] Add relationship to list
-    - [ ] Implement `ListShare` model (`models/list_share.py`)
-        - [ ] Fields: list_id, user_id, role, invited_at, accepted_at
-        - [ ] Add SQLAlchemy model class
-        - [ ] Add relationships to list and user
-    - [ ] Set up database connection in `core/config.py` or `db.py`
-    - [ ] Set up Alembic for migrations
-    - [ ] Create initial migration and apply to database
+    - [x] Design database schema (users, task_lists, tasks, list_shares)
+        - [x] Implement `User` model (`models/user.py`)
+            - [x] Fields: id, email, hashed_password, created_at
+            - [x] Add SQLAlchemy model class
+            - [x] Add relationships to task_lists and shares
+        - [x] Implement `TaskList` model (`models/task_list.py`)
+            - [x] Fields: id, title, owner_id, created_at, updated_at
+            - [x] Add SQLAlchemy model class
+            - [x] Add relationship to tasks and owner
+        - [x] Implement `Task` model (`models/task.py`)
+            - [x] Fields: id, task_list_id, title, completed, created_at, updated_at
+            - [x] Add SQLAlchemy model class
+            - [x] Add relationship to task_list
+        - [x] Implement `ListShare` model (`models/list_share.py`)
+            - [x] Fields: task_list_id, user_id, role, invited_at, accepted_at
+            - [x] Add SQLAlchemy model class
+            - [x] Add relationships to task_list and user
+    - [x] Set up database connection in `core/config.py` or `db.py`
+    - [x] Set up Alembic for migrations
+    - [x] Create initial migration and apply to database
 
 3. **Pydantic Schemas**
     - [ ] Create `auth.py` schemas (register, login, token)
     - [ ] Create `user.py` schemas (UserRead, UserCreate, etc.)
-    - [ ] Create `list.py` schemas (ListRead, ListCreate, ListUpdate, etc.)
+    - [ ] Create `task_list.py` schemas (TaskListRead, TaskListCreate, TaskListUpdate, etc.)
     - [ ] Create `task.py` schemas (TaskRead, TaskCreate, TaskUpdate, etc.)
     - [ ] Create `share.py` schemas (ShareRead, ShareCreate, etc.)
 
@@ -116,5 +116,3 @@
     - [ ] Deploy to cloud provider (optional)
 
 ---
-
-...existing code...

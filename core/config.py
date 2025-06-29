@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # Database config (secrets from .env or environment)
-    postgres_host: str = Field("localhost", env="POSTGRES_HOST")
-    postgres_port: int = Field(5432, env="POSTGRES_PORT")
-    postgres_db: str = Field("lists", env="POSTGRES_DB")
-    postgres_user: str = Field("postgres", env="POSTGRES_USER")
+    postgres_host: str = Field(..., env="POSTGRES_HOST")
+    postgres_port: int = Field(..., env="POSTGRES_PORT")
+    postgres_db: str = Field(..., env="POSTGRES_DB")
+    postgres_user: str = Field(..., env="POSTGRES_USER")
     postgres_password: str = Field(..., env="POSTGRES_PASSWORD")
 
 
