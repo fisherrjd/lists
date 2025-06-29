@@ -1,125 +1,99 @@
 # Shared Lists API
 
-## Define Goal
+## Overview
 
-The primary goal is to develop a robust RESTful API for a collaborative list management application. This API will enable users to:
+Shared Lists is a collaborative list management RESTful API built with Spring Boot. It enables users to create, manage, and share lists (such as grocery or to-do lists) with others. The API supports secure authentication via email/password and is designed for future integration with Google OAuth for third-party login.
 
-* **Create and manage personal lists**: Users can create new lists (e.g., grocery lists, to-do lists).
-* **Add and modify list items**: Each list can contain multiple items, each with a name and quantity. Items can be updated (name, quantity, completion status) or removed.
-* **Share lists**: Users can share their lists with other authenticated users, granting them view and modification access.
-* **Authentication**: Secure user registration and login using traditional email/password and potentially third-party providers like Google.
+## Features
 
-## Define Endpoints
+- **User Registration & Authentication**: Secure registration and login using JWT tokens. Google OAuth login planned.
+- **Personal Lists**: Users can create, update, and delete their own lists.
+- **List Items**: Add, update, and remove items from lists, including marking items as completed.
+- **List Sharing**: Share lists with other users, granting them view or edit access.
+- **Collaborative Editing**: Multiple users can collaborate on shared lists in real time.
 
-This section outlines the core API endpoints, their HTTP methods, and expected request/response structures.
+## API Endpoints
 
-### 1. Authentication
+### Authentication
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/auth/register`     | Registers a new user account.             | `{ "name": "John Doe", "email": "john@example.com", "password": "securepassword" }` |
-| `POST` | `/auth/login`        | Authenticates a user and returns a JWT.   | `{ "email": "john@example.com", "password": "securepassword" }` |
-| `POST` | `/auth/logout`       | Invalidates the current user's session/JWT (if applicable). | (None)                                               |
+| Method | Path             | Description                                 |
+|--------|------------------|---------------------------------------------|
+| POST   | /auth/register   | Register a new user                         |
+| POST   | /auth/login      | Authenticate and receive a JWT              |
+| POST   | /auth/logout     | Invalidate the current user's session/JWT   |
 
-### 2. User Management
+### User Management
 
-| Method | Path                 | Description                               |
-| :----- | :------------------- | :---------------------------------------- |
-| `GET`  | `/users/me`          | Retrieves the profile of the currently authenticated user. |
+| Method | Path      | Description                                 |
+|--------|-----------|---------------------------------------------|
+| GET    | /users/me | Get the current user's profile               |
 
-### 3. List Management
+### List Management
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/lists`             | Creates a new list.                       | `{ "name": "My new grocery list" }`                  |
-| `GET`  | `/lists`             | Retrieves all lists the authenticated user has access to (owned or shared). | (None)                                               |
-| `GET`  | `/lists/:listId`     | Retrieves details of a specific list, including all its items. | (None)                                               |
-| `PUT`  | `/lists/:listId`     | Updates properties of an existing list (e.g., name). | `{ "name": "Updated List Name" }`                    |
-| `DELETE` | `/lists/:listId`   | Deletes a list. Only the owner can delete a list. | (None)                                               |
+| Method | Path                | Description                                 |
+|--------|---------------------|---------------------------------------------|
+| POST   | /lists              | Create a new list                           |
+| GET    | /lists              | Get all accessible lists                    |
+| GET    | /lists/:listId      | Get details of a specific list              |
+| PUT    | /lists/:listId      | Update a list's properties                  |
+| DELETE | /lists/:listId      | Delete a list (owner only)                  |
 
-### 4. List Sharing
+### List Sharing
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `GET`  | `/lists/:listId/users` | Retrieves all users who have access to a specific list. | (None)                                               |
-| `POST` | `/lists/:listId/users` | Shares a list with another user. The user can be identified by email or ID. | `{ "email": "collaborator@example.com" }` or `{ "userId": "some-uuid" }` |
-| `DELETE` | `/lists/:listId/users/:userId` | Removes a user's access to a specific list. | (None)                                               |
+| Method | Path                          | Description                                 |
+|--------|-------------------------------|---------------------------------------------|
+| GET    | /lists/:listId/users          | Get users with access to a list             |
+| POST   | /lists/:listId/users          | Share a list with another user              |
+| DELETE | /lists/:listId/users/:userId  | Remove a user's access to a list            |
 
-### 5. List Items
+### List Items
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/lists/:listId/items` | Adds a new item to a specific list.       | `{ "name": "Apples", "quantity": 5 }`                |
-| `PUT`  | `/lists/:listId/items/:itemId` | Updates an item's properties (name, quantity, completed status). | `{ "name": "Green Apples", "quantity": 3, "completed": true }` |
-| `DELETE` | `/lists/:listId/items/:itemId` | Deletes an item from a specific list. | (None)                                               |
+| Method | Path                                 | Description                                 |
+|--------|--------------------------------------|---------------------------------------------|
+| POST   | /lists/:listId/items                 | Add an item to a list                       |
+| PUT    | /lists/:listId/items/:itemId         | Update an item's properties                 |
+| DELETE | /lists/:listId/items/:itemId         | Delete an item from a list                  |
 
-## Define DB Structure
+## Database Structure
 
-The application will utilize a relational database with the following four tables to manage users, lists, items, and sharing relationships.
+The application uses a relational database with the following tables:
 
-### `users`
+- **users**: Stores user accounts, including support for Google OAuth (`google_id` column).
+- **lists**: Stores lists and their owners.
+- **list_items**: Stores items within each list.
+- **list_users**: Junction table for many-to-many user-list sharing.
 
-Stores user account information, including authentication credentials.
+## Google OAuth Integration (Planned)
 
-```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth integration
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+- `GET /auth/google`: Redirects to Google for OAuth login.
+- `GET /auth/google/callback`: Handles Google callback, logs in or registers the user.
+- The `users` table includes a `google_id` column for this purpose.
 
-### `lists`
+## Technology Stack
 
-Stores the lists themselves.
+- Java 21
+- Spring Boot 3.x
+- JWT for authentication
+- Maven for build management
+- Nix for development environment
+- (Planned) Google OAuth2 integration
 
-```sql
-CREATE TABLE lists (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    owner_id UUID NOT NULL REFERENCES users(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+## Getting Started
 
-### `list_items`
+1. **Clone the repository**
+2. **Set up the environment** (Nix or install Java 21 & Maven)
+3. **Run the backend**:
 
-Stores the items within each list.
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-```sql
-CREATE TABLE list_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    list_id UUID NOT NULL REFERENCES lists(id),
-    name VARCHAR(255) NOT NULL,
-    quantity INTEGER NOT NULL DEFAULT 1,
-    completed BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+4. **API Documentation**: See this README and `/TODO.md` for endpoint details.
 
-### `list_users` (Junction Table)
+## Contributing
 
-Manages the many-to-many relationship between users and lists.
+Contributions are welcome! Please open issues or submit pull requests for new features, bug fixes, or improvements.
 
-```sql
-CREATE TABLE list_users (
-    user_id UUID NOT NULL REFERENCES users(id),
-    list_id UUID NOT NULL REFERENCES lists(id),
-    PRIMARY KEY (user_id, list_id)
-);
-```
+## License
 
-## Google Auth
-
-This will be integrated into the `/auth` endpoints, likely with:
-
-* `GET /auth/google` - Redirect to Google for OAuth.
-* `GET /auth/google/callback` - Handle the callback from Google to log in or register the user.
-
-The `users` table will need a `google_id` column to support this.
+This project is licensed under the MIT License.
