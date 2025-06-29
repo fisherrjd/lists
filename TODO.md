@@ -1,117 +1,124 @@
 # Lists API Endpoints
 
-## Users & Authentication
-
-| Method | Path                  | Description                        |
-|--------|-----------------------|------------------------------------|
-| POST   | /auth/register        | Register a new user                |
-| POST   | /auth/login           | User login                         |
-| GET    | /auth-methods         | List available authentication methods |
-
-## Lists
-
-| Method | Path                        | Description                |
-|--------|-----------------------------|----------------------------|
-| GET    | /lists                      | Get all lists for the user |
-| POST   | /lists                      | Create a new list          |
-| GET    | /lists/{list_id}            | Get a specific list        |
-| PUT    | /lists/{list_id}            | Update a list              |
-| DELETE | /lists/{list_id}            | Delete a list              |
-
-### Tasks
-
-| Method | Path                                         | Description              |
-|--------|----------------------------------------------|--------------------------|
-| POST   | /lists/{list_id}/tasks                       | Add a task to a list     |
-| PUT    | /lists/{list_id}/tasks/{task_id}             | Update a task in a list  |
-
-## Sharing
-
-| Method | Path                                 | Description                |
-|--------|--------------------------------------|----------------------------|
-| POST   | /lists/{list_id}/share               | Share a list with a user   |
-| GET    | /invites                            | Get all invites for user   |
-| POST   | /invites/{invite_id}/accept         | Accept an invite           |
-| POST   | /invites/{invite_id}/reject         | Reject an invite           |
+...existing code...
 
 ---
 
-## Data Models
+## Implementation Tasks
 
-### users
+1. **Project Setup**
+    - [ ] Create project directory and initialize git
+    - [ ] Set up Python virtual environment (using `uv`)
+    - [ ] Create `pyproject.toml` and add dependencies (FastAPI, SQLAlchemy, Pydantic, etc.)
+    - [ ] Use `uv` to install dependencies and lock them
+    - [ ] Create `.env` file for environment variables
+    - [ ] Set up initial folder structure (`core/`, `models/`, `schemas/`, etc.)
+    - [ ] Create `main.py` with FastAPI app instance
+    - [ ] Set up configuration management in `core/config.py`
+    - [ ] Create or update `default.nix` for reproducible builds
+    - [ ] Test environment setup with `nix develop` and `uv` commands
 
-- id: UUID
-- email: str (unique)
-- hashed_password: str
-- created_at: datetime
+2. **Database Models**
+    - [ ] Design database schema (users, lists, tasks, list_shares)
+    - [ ] Implement `User` model (`models/user.py`)
+        - [ ] Fields: id, email, hashed_password, created_at
+        - [ ] Add SQLAlchemy model class
+        - [ ] Add relationships to lists and shares
+    - [ ] Implement `List` model (`models/list.py`)
+        - [ ] Fields: id, title, owner_id, created_at, updated_at
+        - [ ] Add SQLAlchemy model class
+        - [ ] Add relationship to tasks and owner
+    - [ ] Implement `Task` model (`models/task.py`)
+        - [ ] Fields: id, list_id, title, completed, created_at, updated_at
+        - [ ] Add SQLAlchemy model class
+        - [ ] Add relationship to list
+    - [ ] Implement `ListShare` model (`models/list_share.py`)
+        - [ ] Fields: list_id, user_id, role, invited_at, accepted_at
+        - [ ] Add SQLAlchemy model class
+        - [ ] Add relationships to list and user
+    - [ ] Set up database connection in `core/config.py` or `db.py`
+    - [ ] Set up Alembic for migrations
+    - [ ] Create initial migration and apply to database
 
-### lists
+3. **Pydantic Schemas**
+    - [ ] Create `auth.py` schemas (register, login, token)
+    - [ ] Create `user.py` schemas (UserRead, UserCreate, etc.)
+    - [ ] Create `list.py` schemas (ListRead, ListCreate, ListUpdate, etc.)
+    - [ ] Create `task.py` schemas (TaskRead, TaskCreate, TaskUpdate, etc.)
+    - [ ] Create `share.py` schemas (ShareRead, ShareCreate, etc.)
 
-- id: UUID
-- title: str
-- owner_id: UUID (foreign key to users.id)
-- created_at: datetime
-- updated_at: datetime
+4. **Authentication & Authorization**
+    - [ ] Implement password hashing utilities in `auth/security.py`
+    - [ ] Implement JWT token creation and verification in `auth/security.py`
+    - [ ] Create dependency for getting current user in `auth/dependencies.py`
+    - [ ] Add role-based access checks (owner, editor, viewer)
 
-### tasks
+5. **Business Logic Services**
+    - [ ] Implement authentication service (`services/auth_service.py`)
+        - [ ] Register user
+        - [ ] Authenticate user and issue JWT
+    - [ ] Implement list service (`services/list_service.py`)
+        - [ ] Create list
+        - [ ] Get all lists for user
+        - [ ] Get single list
+        - [ ] Update list
+        - [ ] Delete list
+    - [ ] Implement task service (`services/list_service.py` or `services/task_service.py`)
+        - [ ] Add task to list
+        - [ ] Update task
+        - [ ] Mark task as completed
+        - [ ] Delete task
+    - [ ] Implement share service (`services/share_service.py`)
+        - [ ] Share list with user
+        - [ ] Accept/reject invite
+        - [ ] List invites
 
-- id: UUID
-- list_id: UUID (foreign key to lists.id)
-- title: str
-- completed: bool
-- created_at: datetime
-- updated_at: datetime
+6. **API Endpoints**
+    - [ ] Implement auth endpoints (`api/v1/auth.py`)
+        - [ ] POST /auth/register
+        - [ ] POST /auth/login
+        - [ ] GET /auth-methods
+    - [ ] Implement list endpoints (`api/v1/lists.py`)
+        - [ ] GET /lists
+        - [ ] POST /lists
+        - [ ] GET /lists/{list_id}
+        - [ ] PUT /lists/{list_id}
+        - [ ] DELETE /lists/{list_id}
+    - [ ] Implement task endpoints (`api/v1/tasks.py`)
+        - [ ] POST /lists/{list_id}/tasks
+        - [ ] PUT /lists/{list_id}/tasks/{task_id}
+    - [ ] Implement sharing endpoints (`api/v1/shares.py`)
+        - [ ] POST /lists/{list_id}/share
+        - [ ] GET /invites
+        - [ ] POST /invites/{invite_id}/accept
+        - [ ] POST /invites/{invite_id}/reject
 
-### list_shares
+7. **Utilities**
+    - [ ] Add helper functions for common tasks (`utils/helpers.py`)
+    - [ ] Add error handling utilities
+    - [ ] Add response formatting helpers
 
-- list_id: UUID (foreign key to lists.id)
-- user_id: UUID (foreign key to users.id)
-- role: ENUM('owner', 'editor', 'viewer')
-- invited_at: datetime
-- accepted_at: datetime
+8. **Testing**
+    - [ ] Set up test framework (pytest, add to `pyproject.toml` and `default.nix`)
+    - [ ] Write unit tests for models
+    - [ ] Write unit tests for services
+    - [ ] Write unit tests for endpoints
+    - [ ] Write integration tests for API flows
+
+9. **Documentation**
+    - [ ] Document API endpoints in README.md
+    - [ ] Add usage examples
+    - [ ] Document environment variables and configuration
+    - [ ] Add database schema diagram (optional)
+    - [ ] Document how to use `uv` and `nix` for setup and development
+
+10. **(Optional) Deployment**
+    - [ ] Create Dockerfile for the app
+    - [ ] Set up docker-compose for local dev
+    - [ ] Add production settings (gunicorn, etc.)
+    - [ ] Set up CI/CD pipeline (optional)
+    - [ ] Deploy to cloud provider (optional)
 
 ---
 
-## Project Structure Example
-
-```
-task_list_app/
-│
-├── main.py                          # App entry point
-├── requirements.txt                 # Dependencies
-├── .env                             # Environment variables
-│
-├── core/
-│   └── config.py                    # Settings loading
-│
-├── models/                          # ORM Models
-│   ├── user.py
-│   ├── list.py
-│   ├── task.py
-│   └── list_share.py
-│
-├── schemas/                         # Pydantic models for request/response
-│   ├── auth.py
-│   ├── list.py
-│   ├── task.py
-│   └── share.py
-│
-├── services/                        # Business logic
-│   ├── auth_service.py
-│   ├── list_service.py
-│   └── share_service.py
-│
-├── api/
-│   └── v1/
-│       ├── auth.py                  # Auth routes
-│       ├── lists.py                 # List CRUD
-│       ├── tasks.py                 # Task CRUD
-│       └── shares.py                # Sharing logic
-│
-├── auth/
-│   ├── security.py                  # JWT, password hashing
-│   └── dependencies.py              # get_current_user etc.
-│
-└── utils/
-    └── helpers.py                   # Helper functions
-```
+...existing code...
