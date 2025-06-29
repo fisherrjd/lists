@@ -36,11 +36,11 @@ public class ListController {
     }
 
     @PostMapping
-    public ListResponse createList(@Valid @RequestBody CreateListRequest request, Principal principal) {
+    public ResponseEntity<?> createList(@Valid @RequestBody CreateListRequest request, Principal principal) {
         String username = extractUsername(principal);
         User ownerUser = userService.findByUsername(username);
         ListResponse response = listService.createList(request, ownerUser);
-        return response;
+        return ResponseEntity.ok().body(response);
     }
 
     private String extractUsername(Principal principal) {
@@ -74,9 +74,15 @@ public class ListController {
     }
 
     @PutMapping("/{listId}")
-    public ResponseEntity<?> updateList(@PathVariable String listId) {
-        return ResponseEntity.ok().body("102 ListId: " + listId);
-
+    public ResponseEntity<?> updateList(@PathVariable String listId, @Valid @RequestBody rip.jade.lists.dto.list.UpdateListRequest request, Principal principal) {
+        String username = extractUsername(principal);
+        User user = userService.findByUsername(username);
+        try {
+            ListResponse response = listService.updateList(listId, user, request);
+            return ResponseEntity.ok().body(response);
+        } catch (rip.jade.lists.exception.ResourceNotFoundException e) {
+            return ResponseEntity.status(403).body("Forbidden: You do not have access to this list");
+        }
     }
 
     @DeleteMapping("/{listId}")

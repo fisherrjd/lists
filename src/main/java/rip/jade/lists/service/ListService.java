@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import rip.jade.lists.dto.list.CreateListRequest;
 import rip.jade.lists.dto.list.ListResponse;
+import rip.jade.lists.dto.list.UpdateListRequest;
 import rip.jade.lists.model.TaskList;
 import rip.jade.lists.repository.ListRepository;
 import rip.jade.lists.exception.ResourceNotFoundException;
@@ -94,5 +95,20 @@ public class ListService {
             return taskList;
         }
         return null;
+    }
+
+    public ListResponse updateList(String listId, User user, UpdateListRequest request) {
+        TaskList taskList = getListIfUserHasAccess(listId, user);
+        if (taskList == null) {
+            throw new ResourceNotFoundException("List not found or access denied");
+        }
+        if (request.getName() != null) {
+            taskList.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+            taskList.setDescription(request.getDescription());
+        }
+        listRepository.save(taskList);
+        return mapToListResponse(taskList);
     }
 }
