@@ -1,125 +1,117 @@
-# Shared Lists API
+# Lists API Endpoints
 
-## Define Goal
+## Users & Authentication
 
-The primary goal is to develop a robust RESTful API for a collaborative list management application. This API will enable users to:
+| Method | Path                  | Description                        |
+|--------|-----------------------|------------------------------------|
+| POST   | /auth/register        | Register a new user                |
+| POST   | /auth/login           | User login                         |
+| GET    | /auth-methods         | List available authentication methods |
 
-* **Create and manage personal lists**: Users can create new lists (e.g., grocery lists, to-do lists).
-* **Add and modify list items**: Each list can contain multiple items, each with a name and quantity. Items can be updated (name, quantity, completion status) or removed.
-* **Share lists**: Users can share their lists with other authenticated users, granting them view and modification access.
-* **Authentication**: Secure user registration and login using traditional email/password and potentially third-party providers like Google.
+## Lists
 
-## Define Endpoints
+| Method | Path                        | Description                |
+|--------|-----------------------------|----------------------------|
+| GET    | /lists                      | Get all lists for the user |
+| POST   | /lists                      | Create a new list          |
+| GET    | /lists/{list_id}            | Get a specific list        |
+| PUT    | /lists/{list_id}            | Update a list              |
+| DELETE | /lists/{list_id}            | Delete a list              |
 
-This section outlines the core API endpoints, their HTTP methods, and expected request/response structures.
+### Tasks
 
-### 1. Authentication
+| Method | Path                                         | Description              |
+|--------|----------------------------------------------|--------------------------|
+| POST   | /lists/{list_id}/tasks                       | Add a task to a list     |
+| PUT    | /lists/{list_id}/tasks/{task_id}             | Update a task in a list  |
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/auth/register`     | Registers a new user account.             | `{ "name": "John Doe", "email": "john@example.com", "password": "securepassword" }` |
-| `POST` | `/auth/login`        | Authenticates a user and returns a JWT.   | `{ "email": "john@example.com", "password": "securepassword" }` |
-| `POST` | `/auth/logout`       | Invalidates the current user's session/JWT (if applicable). | (None)                                               |
+## Sharing
 
-### 2. User Management
+| Method | Path                                 | Description                |
+|--------|--------------------------------------|----------------------------|
+| POST   | /lists/{list_id}/share               | Share a list with a user   |
+| GET    | /invites                            | Get all invites for user   |
+| POST   | /invites/{invite_id}/accept         | Accept an invite           |
+| POST   | /invites/{invite_id}/reject         | Reject an invite           |
 
-| Method | Path                 | Description                               |
-| :----- | :------------------- | :---------------------------------------- |
-| `GET`  | `/users/me`          | Retrieves the profile of the currently authenticated user. |
+---
 
-### 3. List Management
+## Data Models
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/lists`             | Creates a new list.                       | `{ "name": "My new grocery list" }`                  |
-| `GET`  | `/lists`             | Retrieves all lists the authenticated user has access to (owned or shared). | (None)                                               |
-| `GET`  | `/lists/:listId`     | Retrieves details of a specific list, including all its items. | (None)                                               |
-| `PUT`  | `/lists/:listId`     | Updates properties of an existing list (e.g., name). | `{ "name": "Updated List Name" }`                    |
-| `DELETE` | `/lists/:listId`   | Deletes a list. Only the owner can delete a list. | (None)                                               |
+### users
 
-### 4. List Sharing
+- id: UUID
+- email: str (unique)
+- hashed_password: str
+- created_at: datetime
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `GET`  | `/lists/:listId/users` | Retrieves all users who have access to a specific list. | (None)                                               |
-| `POST` | `/lists/:listId/users` | Shares a list with another user. The user can be identified by email or ID. | `{ "email": "collaborator@example.com" }` or `{ "userId": "some-uuid" }` |
-| `DELETE` | `/lists/:listId/users/:userId` | Removes a user's access to a specific list. | (None)                                               |
+### lists
 
-### 5. List Items
+- id: UUID
+- title: str
+- owner_id: UUID (foreign key to users.id)
+- created_at: datetime
+- updated_at: datetime
 
-| Method | Path                 | Description                               | Request Body (Example)                               |
-| :----- | :------------------- | :---------------------------------------- | :--------------------------------------------------- |
-| `POST` | `/lists/:listId/items` | Adds a new item to a specific list.       | `{ "name": "Apples", "quantity": 5 }`                |
-| `PUT`  | `/lists/:listId/items/:itemId` | Updates an item's properties (name, quantity, completed status). | `{ "name": "Green Apples", "quantity": 3, "completed": true }` |
-| `DELETE` | `/lists/:listId/items/:itemId` | Deletes an item from a specific list. | (None)                                               |
+### tasks
 
-## Define DB Structure
+- id: UUID
+- list_id: UUID (foreign key to lists.id)
+- title: str
+- completed: bool
+- created_at: datetime
+- updated_at: datetime
 
-The application will utilize a relational database with the following four tables to manage users, lists, items, and sharing relationships.
+### list_shares
 
-### `users`
+- list_id: UUID (foreign key to lists.id)
+- user_id: UUID (foreign key to users.id)
+- role: ENUM('owner', 'editor', 'viewer')
+- invited_at: datetime
+- accepted_at: datetime
 
-Stores user account information, including authentication credentials.
+---
 
-```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth integration
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+## Project Structure Example
+
 ```
-
-### `lists`
-
-Stores the lists themselves.
-
-```sql
-CREATE TABLE lists (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    owner_id UUID NOT NULL REFERENCES users(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+task_list_app/
+│
+├── main.py                          # App entry point
+├── requirements.txt                 # Dependencies
+├── .env                             # Environment variables
+│
+├── core/
+│   └── config.py                    # Settings loading
+│
+├── models/                          # ORM Models
+│   ├── user.py
+│   ├── list.py
+│   ├── task.py
+│   └── list_share.py
+│
+├── schemas/                         # Pydantic models for request/response
+│   ├── auth.py
+│   ├── list.py
+│   ├── task.py
+│   └── share.py
+│
+├── services/                        # Business logic
+│   ├── auth_service.py
+│   ├── list_service.py
+│   └── share_service.py
+│
+├── api/
+│   └── v1/
+│       ├── auth.py                  # Auth routes
+│       ├── lists.py                 # List CRUD
+│       ├── tasks.py                 # Task CRUD
+│       └── shares.py                # Sharing logic
+│
+├── auth/
+│   ├── security.py                  # JWT, password hashing
+│   └── dependencies.py              # get_current_user etc.
+│
+└── utils/
+    └── helpers.py                   # Helper functions
 ```
-
-### `list_items`
-
-Stores the items within each list.
-
-```sql
-CREATE TABLE list_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    list_id UUID NOT NULL REFERENCES lists(id),
-    name VARCHAR(255) NOT NULL,
-    quantity INTEGER NOT NULL DEFAULT 1,
-    completed BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### `list_users` (Junction Table)
-
-Manages the many-to-many relationship between users and lists.
-
-```sql
-CREATE TABLE list_users (
-    user_id UUID NOT NULL REFERENCES users(id),
-    list_id UUID NOT NULL REFERENCES lists(id),
-    PRIMARY KEY (user_id, list_id)
-);
-```
-
-## Google Auth
-
-This will be integrated into the `/auth` endpoints, likely with:
-
-* `GET /auth/google` - Redirect to Google for OAuth.
-* `GET /auth/google/callback` - Handle the callback from Google to log in or register the user.
-
-The `users` table will need a `google_id` column to support this.
