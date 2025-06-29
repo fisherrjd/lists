@@ -29,19 +29,6 @@ public class ListService {
         return response;
     }
 
-    // TODO: Move validation to annotations and use @Valid in controller
-    private void validateListRequest(CreateListRequest request) {
-        if (request.getName() == null || request.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("List name is required");
-        }
-        if (request.getName().length() > 100) {
-            throw new IllegalArgumentException("List name must be 100 characters or fewer");
-        }
-        if (request.getDescription() != null && request.getDescription().length() > 500) {
-            throw new IllegalArgumentException("Description must be 500 characters or fewer");
-        }
-    }
-
     public TaskList createTaskListFromRequest(CreateListRequest request) {
         TaskList taskList = new TaskList();
         taskList.setName(request.getName());
