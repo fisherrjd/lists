@@ -1,5 +1,6 @@
 package rip.jade.lists.service;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class ListService {
         taskList.setName(request.getName());
         taskList.setDescription(request.getDescription());
         taskList.setId(UUID.randomUUID());
+        taskList.setAuthorizedUsers(new ArrayList<>()); // Initialize the list of authorized users
+        // Assuming 'ownerUser' is available in the context, otherwise, it should be
+        // passed as a parameter
+        // taskList.getAuthorizedUsers().add(ownerUser); // Add the owner as authorized
         return taskList;
     }
 
