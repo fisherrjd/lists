@@ -1,4 +1,4 @@
-package rip.jade.lists.dto;
+package rip.jade.lists.dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
