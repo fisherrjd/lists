@@ -32,9 +32,9 @@
             - [x] Fields: task_list_id, user_id, role, invited_at, accepted_at
             - [x] Add SQLAlchemy model class
             - [x] Add relationships to task_list and user
-    - [ ] Set up database connection in `core/config.py` or `db.py`
-    - [ ] Set up Alembic for migrations
-    - [ ] Create initial migration and apply to database
+    - [x] Set up database connection in `core/config.py` or `db.py`
+    - [x] Set up Alembic for migrations
+    - [x] Create initial migration and apply to database
 
 3. **Pydantic Schemas**
     - [ ] Create `auth.py` schemas (register, login, token)

@@ -1,10 +1,8 @@
 # --- SQLAlchemy User Model ---
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 import datetime
-
-# This creates a base class for all your SQLAlchemy models
-Base = declarative_base()
+from models import Base
 
 class TaskList(Base):
     __tablename__ = "task_lists"  # Table name in the database

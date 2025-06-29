@@ -1,10 +1,8 @@
 # --- SQLAlchemy User Model ---
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 import datetime
-
-# This creates a base class for all your SQLAlchemy models
-Base = declarative_base()
+from models import Base
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -30,7 +28,7 @@ class TaskCreate(TaskBase):
 
 class TaskRead(TaskBase):
     id: int
-    list_id: int
+    task_list_id: int
     created_at: dt
     updated_at: dt
 

@@ -1,10 +1,8 @@
 # --- SQLAlchemy User Model ---
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 import datetime
-
-# This creates a base class for all your SQLAlchemy models
-Base = declarative_base()
+from models import Base
 
 class User(Base):
     __tablename__ = "users"  # Table name in the database

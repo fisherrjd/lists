@@ -1,10 +1,7 @@
-# --- SQLAlchemy User Model ---
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 import datetime
-
-# This creates a base class for all your SQLAlchemy models
-Base = declarative_base()
+from models import Base
 
 class ListShare(Base):
     __tablename__ = "list_shares"
