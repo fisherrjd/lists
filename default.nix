@@ -1,36 +1,30 @@
 { pkgs ? import
     (fetchTarball {
-      name = "jpetrucciani-2025-06-27";
-      url = "https://github.com/jpetrucciani/nix/archive/bb9791c111e63120a095189ca79c7321e15571ae.tar.gz";
-      sha256 = "0xyahy0dz3jw6whb5fqzbg1120inxpqwhb04ph3ad81gjlx29hhx";
+      name = "jpetrucciani-2025-06-29";
+      url = "https://github.com/jpetrucciani/nix/archive/99daa58a9a5ef743962c37933fa047e6bfb3aa05.tar.gz";
+      sha256 = "1597kqyb8ysxm55cpn04l2z87h7inj5dff50lrbb5kjq4y83vnsl";
     })
     { }
 }:
 let
-  name = "lists";
+  name = "lists-backend";
 
+  uvEnv = pkgs.uv-nix.mkEnv {
+    inherit name; python = pkgs.python313;
+    workspaceRoot = pkgs.nix-gitignore.gitignoreSource [ ".git" ] ./.;
+    pyprojectOverrides = final: prev: { };
+  };
 
   tools = with pkgs; {
     cli = [
       jfmt
       nixup
-      redis
     ];
-    java = [
-      maven
-      zulu
-    ];
+    uv = [ uv uvEnv ];
     scripts = pkgs.lib.attrsets.attrValues scripts;
   };
 
-  scripts = with pkgs; {
-    start = pkgs.pog {
-      name = "start";
-      script = ''
-        ./mvnw spring-boot:run
-      '';
-    };
-  };
+  scripts = with pkgs; { };
   paths = pkgs.lib.flatten [ (builtins.attrValues tools) ];
   env = pkgs.buildEnv {
     inherit name paths; buildInputs = paths;
@@ -39,4 +33,4 @@ in
 (env.overrideAttrs (_: {
   inherit name;
   NIXUP = "0.0.9";
-})) // { inherit scripts; }
+} // uvEnv.uvEnvVars)) // { inherit scripts; }
