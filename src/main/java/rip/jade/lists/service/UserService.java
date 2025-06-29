@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import rip.jade.lists.dto.auth.RegisterRequest;
 import rip.jade.lists.dto.user.UserResponse;
 import rip.jade.lists.dto.user.UserUpdateRequest;
+import rip.jade.lists.exception.UserAlreadyExistsException;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
 
@@ -35,10 +36,10 @@ public class UserService {
 
     private void validateRegisterRequest(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()) != null) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists");
         }
         if (userRepository.findByEmail(request.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new UserAlreadyExistsException("Email already exists");
         }
     }
 

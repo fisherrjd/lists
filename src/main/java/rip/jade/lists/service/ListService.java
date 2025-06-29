@@ -4,13 +4,11 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import rip.jade.lists.dto.auth.RegisterRequest;
 import rip.jade.lists.dto.list.CreateListRequest;
 import rip.jade.lists.dto.list.ListResponse;
-import rip.jade.lists.dto.user.UserResponse;
 import rip.jade.lists.model.TaskList;
-import rip.jade.lists.model.User;
 import rip.jade.lists.repository.ListRepository;
+import rip.jade.lists.exception.ResourceNotFoundException;
 
 @Service
 public class ListService {
@@ -47,5 +45,11 @@ public class ListService {
         response.setDescription(taskList.getDescription());
         return response;
 
+    }
+
+    public ListResponse getlist(String listId) {
+        TaskList taskList = listRepository.findById(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        return mapToListResponse(taskList);
     }
 }

@@ -1,6 +1,7 @@
 package rip.jade.lists.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import rip.jade.lists.dto.auth.RegisterRequest;
+import rip.jade.lists.exception.UserAlreadyExistsException;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
 import rip.jade.lists.service.UserService;
@@ -41,7 +43,7 @@ class UserServiceTest {
 
         when(userRepository.findByUsername("existing")).thenReturn(new User());
 
-        assertThrows(IllegalArgumentException.class, () -> userService.registerUser(req));
+        assertThrows(UserAlreadyExistsException.class, () -> userService.registerUser(req));
     }
 
     @Test
@@ -54,7 +56,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("newuser")).thenReturn(null);
         when(userRepository.findByEmail("existing@email.com")).thenReturn(new User());
 
-        assertThrows(IllegalArgumentException.class, () -> userService.registerUser(req));
+        assertThrows(UserAlreadyExistsException.class, () -> userService.registerUser(req));
     }
 
     @Test
