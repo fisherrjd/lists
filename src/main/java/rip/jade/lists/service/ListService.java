@@ -1,6 +1,7 @@
 package rip.jade.lists.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -51,12 +52,22 @@ public class ListService {
         response.setId(taskList.getId());
         response.setName(taskList.getName());
         response.setDescription(taskList.getDescription());
+        // Add authorized usernames
+        if (taskList.getAuthorizedUsers() != null) {
+            List<String> usernames = new ArrayList<>();
+            for (User user : taskList.getAuthorizedUsers()) {
+                usernames.add(user.getUsername());
+            }
+            response.setAuthorizedUsernames(usernames);
+        } else {
+            response.setAuthorizedUsernames(new ArrayList<>());
+        }
         return response;
 
     }
 
     public ListResponse getlist(String listId) {
-        TaskList taskList = listRepository.findById(UUID.fromString(listId))
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
                 .orElseThrow(() -> new ResourceNotFoundException("List not found"));
         return mapToListResponse(taskList);
     }
@@ -81,7 +92,9 @@ public class ListService {
     }
 
     public ListResponse getList(String listId) {
-        return null;
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        return mapToListResponse(taskList);
     }
 
     public TaskList getListIfUserHasAccess(String listId, User user) {
@@ -118,5 +131,9 @@ public class ListService {
             return java.util.Collections.emptyList();
         }
         return user.getAuthorizedLists();
+    }
+
+    public ListRepository getListRepository() {
+        return this.listRepository;
     }
 }

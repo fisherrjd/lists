@@ -7,7 +7,6 @@ import rip.jade.lists.dto.list.CreateListRequest;
 import rip.jade.lists.dto.list.ListResponse;
 import rip.jade.lists.model.TaskList;
 import rip.jade.lists.model.User;
-import rip.jade.lists.service.AuthSerivce;
 import rip.jade.lists.service.ListService;
 import rip.jade.lists.service.UserService;
 
@@ -68,7 +67,13 @@ public class ListController {
         User userWithLists = userWithListsOpt.get();
         java.util.List<TaskList> lists = listService.getListsForUser(userWithLists);
         java.util.List<ListResponse> responses = lists.stream()
-                .map(listService::mapToListResponse)
+                .map(list -> {
+                    // Always fetch the list with authorized users eagerly loaded
+                    return listService.mapToListResponse(
+                        listService.getListRepository().findByIdWithAuthorizedUsers(list.getId())
+                            .orElse(list)
+                    );
+                })
                 .toList();
         return ResponseEntity.ok().body(responses);
     }
