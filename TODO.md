@@ -35,13 +35,29 @@
     - [x] Set up database connection in `core/config.py` or `db.py`
     - [x] Set up Alembic for migrations
     - [x] Create initial migration and apply to database
-
+alembic upgrade head
 3. **Pydantic Schemas**
-    - [ ] Create `auth.py` schemas (register, login, token)
-    - [ ] Create `user.py` schemas (UserRead, UserCreate, etc.)
-    - [ ] Create `task_list.py` schemas (TaskListRead, TaskListCreate, TaskListUpdate, etc.)
-    - [ ] Create `task.py` schemas (TaskRead, TaskCreate, TaskUpdate, etc.)
-    - [ ] Create `share.py` schemas (ShareRead, ShareCreate, etc.)
+    - [ ] Create `auth.py` schemas
+        - [ ] RegisterRequest (email, password)
+        - [ ] LoginRequest (email, password)
+        - [ ] Token (access_token, token_type)
+        - [ ] TokenPayload (sub, exp)
+    - [ ] Create `user.py` schemas
+        - [ ] UserRead (id, email, created_at)
+        - [ ] UserCreate (email, password)
+        - [ ] UserUpdate (optional fields)
+    - [ ] Create `task_list.py` schemas
+        - [ ] TaskListRead (id, title, description, created_at, updated_at, owner_id)
+        - [ ] TaskListCreate (title, description)
+        - [ ] TaskListUpdate (optional fields)
+    - [ ] Create `task.py` schemas
+        - [ ] TaskRead (id, task_list_id, title, completed, created_at, updated_at)
+        - [ ] TaskCreate (task_list_id, title)
+        - [ ] TaskUpdate (optional fields)
+    - [ ] Create `share.py` schemas
+        - [ ] ShareRead (id, task_list_id, user_id, role, invited_at, accepted_at)
+        - [ ] ShareCreate (task_list_id, user_id, role)
+        - [ ] ShareUpdate (accepted_at, role)
 
 4. **Authentication & Authorization**
     - [ ] Implement password hashing utilities in `auth/security.py`
