@@ -77,41 +77,41 @@
 ```
 task_list_app/
 │
-├── main.py                          # App entry point
-├── requirements.txt                 # Dependencies
-├── .env                             # Environment variables
+├── main.py                  # App entry point
+├── requirements.txt         # Dependencies
+├── .env                     # Environment variables
 │
 ├── core/
-│   └── config.py                    # Settings loading
+│   └── config.py            # Settings loader
 │
-├── models/                          # ORM Models
+├── models/                  # ORM Models
 │   ├── user.py
 │   ├── list.py
 │   ├── task.py
 │   └── list_share.py
 │
-├── schemas/                         # Pydantic models for request/response
+├── schemas/                 # Pydantic models
 │   ├── auth.py
 │   ├── list.py
 │   ├── task.py
 │   └── share.py
 │
-├── services/                        # Business logic
+├── services/                # Business logic
 │   ├── auth_service.py
 │   ├── list_service.py
 │   └── share_service.py
 │
 ├── api/
 │   └── v1/
-│       ├── auth.py                  # Auth routes
-│       ├── lists.py                 # List CRUD
-│       ├── tasks.py                 # Task CRUD
-│       └── shares.py                # Sharing logic
+│       ├── auth.py          # Auth routes
+│       ├── lists.py         # List CRUD
+│       ├── tasks.py         # Task CRUD
+│       └── shares.py        # Sharing logic
 │
 ├── auth/
-│   ├── security.py                  # JWT, password hashing
-│   └── dependencies.py              # get_current_user etc.
+│   ├── security.py          # JWT, password hashing
+│   └── dependencies.py      # get_current_user etc.
 │
 └── utils/
-    └── helpers.py                   # Helper functions
+    └── helpers.py           # Helper functions
 ```
