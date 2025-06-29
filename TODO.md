@@ -9,10 +9,10 @@
     - [x] Use `uv` to install dependencies and lock them
     - [x] Create `.env` file for environment variables
     - [x] Set up initial folder structure (`core/`, `models/`, `schemas/`, etc.)
-    - [ ] Create `main.py` with FastAPI app instance
-    - [ ] Set up configuration management in `core/config.py`
-    - [ ] Create or update `default.nix` for reproducible builds
-    - [ ] Test environment setup with `nix develop` and `uv` commands
+    - [x] Create `main.py` with FastAPI app instance
+    - [x] Set up configuration management in `core/config.py`
+    - [x] Create or update `default.nix` for reproducible builds
+    - [x] Test environment setup with `nix develop` and `uv` commands
 
 2. **Database Models**
     - [ ] Design database schema (users, lists, tasks, list_shares)
