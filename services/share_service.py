@@ -1,12 +1,13 @@
-from models.list_share import ListShare
+from models.list_share import ListShare, RoleEnum
 from sqlalchemy.orm import Session
 from typing import List
+from schemas.share import ShareCreate, ShareUpdate
 
-def share_list_with_user(db: Session, list_id: int, user_id: int, role: str) -> ListShare:
+def share_list_with_user(db: Session, share_in: ShareCreate) -> ListShare:
     # TODO: Implement sharing a list with a user
     pass
 
-def accept_invite(db: Session, invite_id: int) -> ListShare:
+def accept_invite(db: Session, invite_id: int, update_in: ShareUpdate) -> ListShare:
     # TODO: Implement accepting an invite
     pass
 

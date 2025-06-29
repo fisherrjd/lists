@@ -1,8 +1,9 @@
 from models.task_list import TaskList
 from sqlalchemy.orm import Session
 from typing import List
+from schemas.task_list import TaskListCreate, TaskListUpdate
 
-def create_list(db: Session, user_id: int, title: str, description: str) -> TaskList:
+def create_list(db: Session, user_id: int, list_in: TaskListCreate) -> TaskList:
     # TODO: Implement list creation
     pass
 
@@ -14,7 +15,7 @@ def get_list(db: Session, list_id: int) -> TaskList:
     # TODO: Implement fetching a single list
     pass
 
-def update_list(db: Session, list_id: int, **kwargs) -> TaskList:
+def update_list(db: Session, list_id: int, list_in: TaskListUpdate) -> TaskList:
     # TODO: Implement updating a list
     pass
 

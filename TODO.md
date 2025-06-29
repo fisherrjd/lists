@@ -65,9 +65,9 @@
     - [x] Add role-based access checks (owner, editor, viewer)
 
 5. **Business Logic Services**
-    - [ ] Implement authentication service (`services/auth_service.py`)
-        - [ ] Register user
-        - [ ] Authenticate user and issue JWT
+    - [x] Implement authentication service (`services/auth_service.py`)
+        - [x] Register user
+        - [x] Authenticate user and issue JWT
     - [ ] Implement list service (`services/list_service.py`)
         - [ ] Create list
         - [ ] Get all lists for user
