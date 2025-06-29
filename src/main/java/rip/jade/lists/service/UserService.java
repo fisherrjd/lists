@@ -42,6 +42,8 @@ public class UserService {
         }
     }
 
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
     private User createUserFromRequest(RegisterRequest request) {
         User user = new User();
         user.setEmail(request.getEmail());
