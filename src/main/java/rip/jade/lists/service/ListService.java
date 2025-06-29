@@ -1,63 +1,139 @@
 package rip.jade.lists.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import rip.jade.lists.dto.auth.RegisterRequest;
 import rip.jade.lists.dto.list.CreateListRequest;
 import rip.jade.lists.dto.list.ListResponse;
-import rip.jade.lists.dto.user.UserResponse;
+import rip.jade.lists.dto.list.UpdateListRequest;
 import rip.jade.lists.model.TaskList;
-import rip.jade.lists.model.User;
 import rip.jade.lists.repository.ListRepository;
+import rip.jade.lists.exception.ResourceNotFoundException;
+import rip.jade.lists.model.User;
+import rip.jade.lists.repository.UserRepository;
 
 @Service
 public class ListService {
 
     private final ListRepository listRepository;
+    private final UserRepository userRepository;
 
-    ListService(ListRepository listRepository) {
+    public ListService(ListRepository listRepository, UserRepository userRepository) {
         this.listRepository = listRepository;
+        this.userRepository = userRepository;
     }
 
-    public ListResponse createList(CreateListRequest request) {
-        validateListRequest(request);
-        TaskList taskList = createTaskListFromRequest(request);
+    public ListResponse createList(CreateListRequest request, User ownerUser) {
+        TaskList taskList = createTaskListFromRequest(request, ownerUser);
         ListResponse response = mapToListResponse(taskList);
         listRepository.save(taskList);
         return response;
     }
 
-    // TODO: Move validation to annotations and use @Valid in controller
-    private void validateListRequest(CreateListRequest request) {
-        if (request.getName() == null || request.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("List name is required");
-        }
-        if (request.getName().length() > 100) {
-            throw new IllegalArgumentException("List name must be 100 characters or fewer");
-        }
-        if (request.getDescription() != null && request.getDescription().length() > 500) {
-            throw new IllegalArgumentException("Description must be 500 characters or fewer");
-        }
-    }
-
-    public TaskList createTaskListFromRequest(CreateListRequest request) {
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
+    public TaskList createTaskListFromRequest(CreateListRequest request, User ownerUser) {
         TaskList taskList = new TaskList();
         taskList.setName(request.getName());
         taskList.setDescription(request.getDescription());
         taskList.setId(UUID.randomUUID());
+        taskList.setAuthorizedUsers(new ArrayList<>()); // Initialize the list of authorized users
+        taskList.getAuthorizedUsers().add(ownerUser); // Add the owner as authorized
         return taskList;
     }
 
     // Possibly move to mapper class depending on needs
     // TODO look into using an object mapper
-    private ListResponse mapToListResponse(TaskList taskList) {
+    public ListResponse mapToListResponse(TaskList taskList) {
         ListResponse response = new ListResponse();
         response.setId(taskList.getId());
         response.setName(taskList.getName());
         response.setDescription(taskList.getDescription());
+        // Add authorized usernames
+        if (taskList.getAuthorizedUsers() != null) {
+            List<String> usernames = new ArrayList<>();
+            for (User user : taskList.getAuthorizedUsers()) {
+                usernames.add(user.getUsername());
+            }
+            response.setAuthorizedUsernames(usernames);
+        } else {
+            response.setAuthorizedUsernames(new ArrayList<>());
+        }
         return response;
 
+    }
+
+    public ListResponse getlist(String listId) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        return mapToListResponse(taskList);
+    }
+
+    public void deleteList(String listId) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        // Remove this list from each user's authorizedLists
+        if (taskList.getAuthorizedUsers() != null) {
+            for (User user : taskList.getAuthorizedUsers()) {
+                // Fetch user with authorizedLists initialized
+                User managedUser = userRepository.findByIdWithAuthorizedLists(user.getId())
+                        .orElse(user);
+                if (managedUser.getAuthorizedLists() != null) {
+                    managedUser.getAuthorizedLists().remove(taskList);
+                }
+            }
+            // Remove all users from the list
+            taskList.getAuthorizedUsers().clear();
+        }
+        listRepository.delete(taskList);
+    }
+
+    public ListResponse getList(String listId) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
+        return mapToListResponse(taskList);
+    }
+
+    public TaskList getListIfUserHasAccess(String listId, User user) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElse(null);
+        if (taskList == null) {
+            return null;
+        }
+        if (taskList.getAuthorizedUsers() != null && taskList.getAuthorizedUsers().stream()
+                .anyMatch(u -> u.getId().equals(user.getId()))) {
+            return taskList;
+        }
+        return null;
+    }
+
+    public ListResponse updateList(String listId, User user, UpdateListRequest request) {
+        TaskList taskList = getListIfUserHasAccess(listId, user);
+        if (taskList == null) {
+            throw new ResourceNotFoundException("List not found or access denied");
+        }
+        if (request.getName() != null) {
+            taskList.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+            taskList.setDescription(request.getDescription());
+        }
+        listRepository.save(taskList);
+        return mapToListResponse(taskList);
+    }
+
+    public java.util.List<TaskList> getListsForUser(User user) {
+        // Return all lists where the user is authorized
+        if (user.getAuthorizedLists() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return user.getAuthorizedLists();
+    }
+
+    public ListRepository getListRepository() {
+        return this.listRepository;
     }
 }

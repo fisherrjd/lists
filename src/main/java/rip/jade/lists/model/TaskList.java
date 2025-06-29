@@ -2,10 +2,12 @@ package rip.jade.lists.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +19,8 @@ public class TaskList {
     private UUID id;
     private String name;
     private String description;
-    // TODO: Add a collection of authorized users (e.g., List<User> authorizedUsers)
+
+    @ManyToMany
+    private List<User> authorizedUsers;
     // GOOGLE ID: google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth TODO
 }

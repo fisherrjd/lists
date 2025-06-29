@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import rip.jade.lists.dto.auth.RegisterRequest;
 import rip.jade.lists.dto.user.UserResponse;
 import rip.jade.lists.dto.user.UserUpdateRequest;
+import rip.jade.lists.exception.UserAlreadyExistsException;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
 
@@ -20,6 +21,10 @@ public class UserService {
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserRepository getUserRepository() {
+        return this.userRepository;
     }
 
     /**
@@ -35,13 +40,15 @@ public class UserService {
 
     private void validateRegisterRequest(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()) != null) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists");
         }
         if (userRepository.findByEmail(request.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new UserAlreadyExistsException("Email already exists");
         }
     }
 
+    // Possibly move to mapper class depending on needs
+    // TODO look into using an object mapper
     private User createUserFromRequest(RegisterRequest request) {
         User user = new User();
         user.setEmail(request.getEmail());
@@ -62,6 +69,14 @@ public class UserService {
 
         // 7. (TODO) Send a verification email or welcome message
         // 8. (TODO) Handle exceptions
+    }
+
+    public User findByUsername(String username) {
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+        }
+        return user;
     }
 
     /**
@@ -117,4 +132,5 @@ public class UserService {
     public void lockUserAccount(UUID userId) {
         // TODO: Implement account locking logic
     }
+
 }
