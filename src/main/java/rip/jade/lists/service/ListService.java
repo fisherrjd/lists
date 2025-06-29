@@ -10,14 +10,22 @@ import rip.jade.lists.dto.list.ListResponse;
 import rip.jade.lists.dto.user.UserResponse;
 import rip.jade.lists.model.TaskList;
 import rip.jade.lists.model.User;
+import rip.jade.lists.repository.ListRepository;
 
 @Service
 public class ListService {
+
+    private final ListRepository listRepository;
+
+    ListService(ListRepository listRepository) {
+        this.listRepository = listRepository;
+    }
 
     public ListResponse createList(CreateListRequest request) {
         validateListRequest(request);
         TaskList taskList = createTaskListFromRequest(request);
         ListResponse response = mapToListResponse(taskList);
+        listRepository.save(taskList);
         return response;
     }
 
