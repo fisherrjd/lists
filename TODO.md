@@ -35,29 +35,28 @@
     - [x] Set up database connection in `core/config.py` or `db.py`
     - [x] Set up Alembic for migrations
     - [x] Create initial migration and apply to database
-alembic upgrade head
 3. **Pydantic Schemas**
-    - [ ] Create `auth.py` schemas
-        - [ ] RegisterRequest (email, password)
-        - [ ] LoginRequest (email, password)
-        - [ ] Token (access_token, token_type)
-        - [ ] TokenPayload (sub, exp)
-    - [ ] Create `user.py` schemas
-        - [ ] UserRead (id, email, created_at)
-        - [ ] UserCreate (email, password)
-        - [ ] UserUpdate (optional fields)
-    - [ ] Create `task_list.py` schemas
-        - [ ] TaskListRead (id, title, description, created_at, updated_at, owner_id)
-        - [ ] TaskListCreate (title, description)
-        - [ ] TaskListUpdate (optional fields)
-    - [ ] Create `task.py` schemas
-        - [ ] TaskRead (id, task_list_id, title, completed, created_at, updated_at)
-        - [ ] TaskCreate (task_list_id, title)
-        - [ ] TaskUpdate (optional fields)
-    - [ ] Create `share.py` schemas
-        - [ ] ShareRead (id, task_list_id, user_id, role, invited_at, accepted_at)
-        - [ ] ShareCreate (task_list_id, user_id, role)
-        - [ ] ShareUpdate (accepted_at, role)
+    - [x] Create `auth.py` schemas
+        - [x] RegisterRequest (email, password)
+        - [x] LoginRequest (email, password)
+        - [x] Token (access_token, token_type)
+        - [x] TokenPayload (sub, exp)
+    - [x] Create `user.py` schemas
+        - [x] UserRead (id, email, created_at)
+        - [x] UserCreate (email, password)
+        - [x] UserUpdate (optional fields)
+    - [x] Create `task_list.py` schemas
+        - [x] TaskListRead (id, title, description, created_at, updated_at, owner_id)
+        - [x] TaskListCreate (title, description)
+        - [x] TaskListUpdate (optional fields)
+    - [x] Create `task.py` schemas
+        - [x] TaskRead (id, task_list_id, title, completed, created_at, updated_at)
+        - [x] TaskCreate (task_list_id, title)
+        - [x] TaskUpdate (optional fields)
+    - [x] Create `share.py` schemas
+        - [x] ShareRead (id, task_list_id, user_id, role, invited_at, accepted_at)
+        - [x] ShareCreate (task_list_id, user_id, role)
+        - [x] ShareUpdate (accepted_at, role)
 
 4. **Authentication & Authorization**
     - [ ] Implement password hashing utilities in `auth/security.py`
