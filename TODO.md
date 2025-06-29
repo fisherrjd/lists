@@ -3,12 +3,12 @@
 ## Implementation Tasks
 
 1. **Project Setup**
-    - [ ] Create project directory and initialize git
-    - [ ] Set up Python virtual environment (using `uv`)
-    - [ ] Create `pyproject.toml` and add dependencies (FastAPI, SQLAlchemy, Pydantic, etc.)
-    - [ ] Use `uv` to install dependencies and lock them
-    - [ ] Create `.env` file for environment variables
-    - [ ] Set up initial folder structure (`core/`, `models/`, `schemas/`, etc.)
+    - [x] Create project directory and initialize git
+    - [x] Set up Python virtual environment (using `uv`)
+    - [x] Create `pyproject.toml` and add dependencies (FastAPI, SQLAlchemy, Pydantic, etc.)
+    - [x] Use `uv` to install dependencies and lock them
+    - [x] Create `.env` file for environment variables
+    - [x] Set up initial folder structure (`core/`, `models/`, `schemas/`, etc.)
     - [ ] Create `main.py` with FastAPI app instance
     - [ ] Set up configuration management in `core/config.py`
     - [ ] Create or update `default.nix` for reproducible builds
