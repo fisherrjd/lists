@@ -1,9 +1,5 @@
 # Lists API Endpoints
 
-...existing code...
-
----
-
 ## Implementation Tasks
 
 1. **Project Setup**
