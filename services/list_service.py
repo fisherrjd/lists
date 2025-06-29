@@ -1,0 +1,23 @@
+from models.task_list import TaskList
+from sqlalchemy.orm import Session
+from typing import List
+
+def create_list(db: Session, user_id: int, title: str, description: str) -> TaskList:
+    # TODO: Implement list creation
+    pass
+
+def get_lists_for_user(db: Session, user_id: int) -> List[TaskList]:
+    # TODO: Implement fetching all lists for a user
+    pass
+
+def get_list(db: Session, list_id: int) -> TaskList:
+    # TODO: Implement fetching a single list
+    pass
+
+def update_list(db: Session, list_id: int, **kwargs) -> TaskList:
+    # TODO: Implement updating a list
+    pass
+
+def delete_list(db: Session, list_id: int) -> None:
+    # TODO: Implement deleting a list
+    pass
