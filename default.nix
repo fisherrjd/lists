@@ -23,7 +23,14 @@ let
     scripts = pkgs.lib.attrsets.attrValues scripts;
   };
 
-  scripts = with pkgs; { };
+  scripts = with pkgs; {
+    start = pkgs.pog {
+      name = "start";
+      script = ''
+        ./mvnw spring-boot:run
+      '';
+    };
+  };
   paths = pkgs.lib.flatten [ (builtins.attrValues tools) ];
   env = pkgs.buildEnv {
     inherit name paths; buildInputs = paths;
