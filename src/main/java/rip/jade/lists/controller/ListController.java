@@ -56,9 +56,21 @@ public class ListController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUsersLists() {
-        return ResponseEntity.ok().body("100 WIP");
-
+    public ResponseEntity<?> getUsersLists(Principal principal) {
+        String username = extractUsername(principal);
+        User user = userService.findByUsername(username);
+        // Fetch user with authorizedLists eagerly loaded
+        java.util.Optional<User> userWithListsOpt = userService.getUserRepository()
+                .findByIdWithAuthorizedLists(user.getId());
+        if (userWithListsOpt.isEmpty()) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+        User userWithLists = userWithListsOpt.get();
+        java.util.List<TaskList> lists = listService.getListsForUser(userWithLists);
+        java.util.List<ListResponse> responses = lists.stream()
+                .map(listService::mapToListResponse)
+                .toList();
+        return ResponseEntity.ok().body(responses);
     }
 
     @GetMapping("/{listId}")
@@ -74,7 +86,8 @@ public class ListController {
     }
 
     @PutMapping("/{listId}")
-    public ResponseEntity<?> updateList(@PathVariable String listId, @Valid @RequestBody rip.jade.lists.dto.list.UpdateListRequest request, Principal principal) {
+    public ResponseEntity<?> updateList(@PathVariable String listId,
+            @Valid @RequestBody rip.jade.lists.dto.list.UpdateListRequest request, Principal principal) {
         String username = extractUsername(principal);
         User user = userService.findByUsername(username);
         try {

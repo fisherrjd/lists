@@ -23,6 +23,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public UserRepository getUserRepository() {
+        return this.userRepository;
+    }
+
     /**
      * Registers a new user.
      * Implementation: Validate input, hash password, save user to DB.
@@ -128,4 +132,5 @@ public class UserService {
     public void lockUserAccount(UUID userId) {
         // TODO: Implement account locking logic
     }
+
 }

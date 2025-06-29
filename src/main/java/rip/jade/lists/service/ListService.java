@@ -111,4 +111,12 @@ public class ListService {
         listRepository.save(taskList);
         return mapToListResponse(taskList);
     }
+
+    public java.util.List<TaskList> getListsForUser(User user) {
+        // Return all lists where the user is authorized
+        if (user.getAuthorizedLists() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return user.getAuthorizedLists();
+    }
 }
