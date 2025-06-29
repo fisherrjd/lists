@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.dto.auth.RegisterRequest;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
 import rip.jade.lists.service.UserService;

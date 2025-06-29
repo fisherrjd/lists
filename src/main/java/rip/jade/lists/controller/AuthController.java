@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
-import rip.jade.lists.dto.AuthResponse;
-import rip.jade.lists.dto.RegisterRequest;
-import rip.jade.lists.dto.LoginRequest;
-import rip.jade.lists.dto.UserResponse;
 import rip.jade.lists.dto.ErrorResponse;
+import rip.jade.lists.dto.auth.AuthResponse;
+import rip.jade.lists.dto.auth.LoginRequest;
+import rip.jade.lists.dto.auth.RegisterRequest;
+import rip.jade.lists.dto.user.UserResponse;
 import rip.jade.lists.service.AuthSerivce;
 import rip.jade.lists.service.UserService;
 

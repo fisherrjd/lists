@@ -5,12 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import java.util.concurrent.TimeUnit;
 
-import rip.jade.lists.dto.AuthResponse;
-import rip.jade.lists.dto.LoginRequest;
-import rip.jade.lists.dto.RegisterRequest;
+import rip.jade.lists.dto.auth.AuthResponse;
+import rip.jade.lists.dto.auth.LoginRequest;
 import rip.jade.lists.repository.UserRepository;
-import rip.jade.lists.dto.UserResponse;
-import rip.jade.lists.dto.UserUpdateRequest;
 import rip.jade.lists.model.User;
 import rip.jade.lists.util.JwtUtil;
 

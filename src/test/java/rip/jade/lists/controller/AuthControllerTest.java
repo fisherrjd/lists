@@ -4,10 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import rip.jade.lists.dto.UserResponse;
+
+import rip.jade.lists.dto.auth.AuthResponse;
+import rip.jade.lists.dto.user.UserResponse;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,7 +64,7 @@ class AuthControllerTest {
                 String json = "{" +
                                 "\"username\": \"testuser\"," +
                                 "\"password\": \"Password1!\"}";
-                rip.jade.lists.dto.AuthResponse mockAuthResponse = new rip.jade.lists.dto.AuthResponse();
+                AuthResponse mockAuthResponse = new AuthResponse();
                 mockAuthResponse.setToken("mock-token");
                 mockAuthResponse.setUsername("testuser");
                 mockAuthResponse.setEmail("testuser@email.com");

@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import rip.jade.lists.dto.RegisterRequest;
-import rip.jade.lists.dto.UserResponse;
-import rip.jade.lists.dto.UserUpdateRequest;
+import rip.jade.lists.dto.auth.RegisterRequest;
+import rip.jade.lists.dto.user.UserResponse;
+import rip.jade.lists.dto.user.UserUpdateRequest;
 import rip.jade.lists.model.User;
 import rip.jade.lists.repository.UserRepository;
 

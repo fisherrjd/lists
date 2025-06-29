@@ -1,4 +1,4 @@
-package rip.jade.lists.dto;
+package rip.jade.lists.dto.user;
 
 import lombok.Data;
 import java.util.UUID;
