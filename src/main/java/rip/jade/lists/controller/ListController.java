@@ -62,9 +62,15 @@ public class ListController {
     }
 
     @GetMapping("/{listId}")
-    public ResponseEntity<?> getList(@PathVariable String listId) {
-        return ResponseEntity.ok().body("101 ListId: " + listId);
-
+    public ResponseEntity<?> getList(@PathVariable String listId, Principal principal) {
+        String username = extractUsername(principal);
+        User user = userService.findByUsername(username);
+        TaskList list = listService.getListIfUserHasAccess(listId, user);
+        if (list == null) {
+            return ResponseEntity.status(403).body("Forbidden: You do not have access to this list");
+        }
+        ListResponse response = listService.mapToListResponse(list);
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/{listId}")

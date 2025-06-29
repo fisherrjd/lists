@@ -45,7 +45,7 @@ public class ListService {
 
     // Possibly move to mapper class depending on needs
     // TODO look into using an object mapper
-    private ListResponse mapToListResponse(TaskList taskList) {
+    public ListResponse mapToListResponse(TaskList taskList) {
         ListResponse response = new ListResponse();
         response.setId(taskList.getId());
         response.setName(taskList.getName());
@@ -77,5 +77,22 @@ public class ListService {
             taskList.getAuthorizedUsers().clear();
         }
         listRepository.delete(taskList);
+    }
+
+    public ListResponse getList(String listId) {
+        return null;
+    }
+
+    public TaskList getListIfUserHasAccess(String listId, User user) {
+        TaskList taskList = listRepository.findByIdWithAuthorizedUsers(UUID.fromString(listId))
+                .orElse(null);
+        if (taskList == null) {
+            return null;
+        }
+        if (taskList.getAuthorizedUsers() != null && taskList.getAuthorizedUsers().stream()
+                .anyMatch(u -> u.getId().equals(user.getId()))) {
+            return taskList;
+        }
+        return null;
     }
 }
