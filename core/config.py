@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     postgres_user: str = Field(..., env="POSTGRES_USER")
     postgres_password: str = Field(..., env="POSTGRES_PASSWORD")
 
+    # JWT config (secrets from .env or environment)
+    secret_key: str = Field(..., env="SECRET_KEY")
+    algorithm: str = "HS256"
+
 
     @property
     def database_url(self):

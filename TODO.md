@@ -59,10 +59,10 @@
         - [x] ShareUpdate (accepted_at, role)
 
 4. **Authentication & Authorization**
-    - [ ] Implement password hashing utilities in `auth/security.py`
-    - [ ] Implement JWT token creation and verification in `auth/security.py`
-    - [ ] Create dependency for getting current user in `auth/dependencies.py`
-    - [ ] Add role-based access checks (owner, editor, viewer)
+    - [x] Implement password hashing utilities in `auth/security.py`
+    - [x] Implement JWT token creation and verification in `auth/security.py`
+    - [x] Create dependency for getting current user in `auth/dependencies.py`
+    - [x] Add role-based access checks (owner, editor, viewer)
 
 5. **Business Logic Services**
     - [ ] Implement authentication service (`services/auth_service.py`)
