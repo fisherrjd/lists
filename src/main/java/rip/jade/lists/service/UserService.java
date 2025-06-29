@@ -67,6 +67,14 @@ public class UserService {
         // 8. (TODO) Handle exceptions
     }
 
+    public User findByUsername(String username) {
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+        }
+        return user;
+    }
+
     /**
      * Retrieves user details by username or ID.
      * Implementation: Query user repository for user info.

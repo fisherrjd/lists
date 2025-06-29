@@ -10,6 +10,7 @@ import rip.jade.lists.dto.list.ListResponse;
 import rip.jade.lists.model.TaskList;
 import rip.jade.lists.repository.ListRepository;
 import rip.jade.lists.exception.ResourceNotFoundException;
+import rip.jade.lists.model.User;
 
 @Service
 public class ListService {
@@ -20,8 +21,8 @@ public class ListService {
         this.listRepository = listRepository;
     }
 
-    public ListResponse createList(CreateListRequest request) {
-        TaskList taskList = createTaskListFromRequest(request);
+    public ListResponse createList(CreateListRequest request, User ownerUser) {
+        TaskList taskList = createTaskListFromRequest(request, ownerUser);
         ListResponse response = mapToListResponse(taskList);
         listRepository.save(taskList);
         return response;
@@ -29,15 +30,13 @@ public class ListService {
 
     // Possibly move to mapper class depending on needs
     // TODO look into using an object mapper
-    public TaskList createTaskListFromRequest(CreateListRequest request) {
+    public TaskList createTaskListFromRequest(CreateListRequest request, User ownerUser) {
         TaskList taskList = new TaskList();
         taskList.setName(request.getName());
         taskList.setDescription(request.getDescription());
         taskList.setId(UUID.randomUUID());
         taskList.setAuthorizedUsers(new ArrayList<>()); // Initialize the list of authorized users
-        // Assuming 'ownerUser' is available in the context, otherwise, it should be
-        // passed as a parameter
-        // taskList.getAuthorizedUsers().add(ownerUser); // Add the owner as authorized
+        taskList.getAuthorizedUsers().add(ownerUser); // Add the owner as authorized
         return taskList;
     }
 

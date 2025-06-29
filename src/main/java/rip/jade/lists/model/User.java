@@ -24,4 +24,14 @@ public class User {
     @ManyToMany(mappedBy = "authorizedUsers")
     private List<TaskList> authorizedLists;
     // GOOGLE ID: google_id VARCHAR(255) UNIQUE NULL, -- For Google OAuth TODO
+
+    @Override
+    public String toString() {
+        // Avoid accessing lazy collections in toString
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
