@@ -14,13 +14,14 @@ import models.user, models.task, models.task_list, models.list_share  # ensure a
 config = context.config
 
 # Load environment variables from .env
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 # Set sqlalchemy.url from environment variables
-config.set_main_option(
-    "sqlalchemy.url",
-    f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
-)
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option(
+        "sqlalchemy.url",
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}",
+    )
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -77,9 +78,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
