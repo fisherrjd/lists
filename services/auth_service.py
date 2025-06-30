@@ -1,7 +1,7 @@
 from models.user import User
 from sqlalchemy.orm import Session
 from schemas.user import UserCreate
-from auth.security import get_password_hash, create_access_token as jwt_create_access_token, verify_password
+from auth.security import hash_password, create_access_token as jwt_create_access_token, verify_password
 from fastapi import HTTPException, status
 
 
@@ -14,7 +14,7 @@ def register_user(db: Session, user_in: UserCreate) -> User:
             detail="Email already registered."
         )
     # Hash the password
-    hashed_password = get_password_hash(user_in.password)
+    hashed_password = hash_password(user_in.password)
     # Create user instance
     user = User(
         email=user_in.email,

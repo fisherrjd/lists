@@ -10,6 +10,7 @@ class Task(Base):
     task_list_id = Column(Integer, ForeignKey("task_lists.id"), nullable=False)
     title = Column(String, nullable=False)  # renamed from thing for clarity
     completed = Column(Boolean, default=False)
+    quantity = Column(Integer, nullable=True)  # Optional quantity field
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 

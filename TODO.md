@@ -74,20 +74,20 @@
         - [ ] Get single list
         - [ ] Update list
         - [ ] Delete list
-    - [ ] Implement task service (`services/list_service.py` or `services/task_service.py`)
-        - [ ] Add task to list
-        - [ ] Update task
-        - [ ] Mark task as completed
-        - [ ] Delete task
+    - [x] Implement task service (`services/list_service.py` or `services/task_service.py`)
+        - [x] Add task to list
+        - [x] Update task
+        - [x] Mark task as completed
+        - [x] Delete task
     - [ ] Implement share service (`services/share_service.py`)
         - [ ] Share list with user
         - [ ] Accept/reject invite
         - [ ] List invites
 
 6. **API Endpoints**
-    - [ ] Implement auth endpoints (`api/v1/auth.py`)
-        - [ ] POST /auth/register
-        - [ ] POST /auth/login
+    - [x] Implement auth endpoints (`api/v1/auth.py`)
+        - [x] POST /auth/register
+        - [x] POST /auth/login
         - [ ] GET /auth-methods
     - [ ] Implement list endpoints (`api/v1/lists.py`)
         - [ ] GET /lists
