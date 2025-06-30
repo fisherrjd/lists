@@ -1,99 +1,117 @@
-# Shared Lists API
+# Lists API Endpoints
 
-## Overview
+## Users & Authentication
 
-Shared Lists is a collaborative list management RESTful API built with Spring Boot. It enables users to create, manage, and share lists (such as grocery or to-do lists) with others. The API supports secure authentication via email/password and is designed for future integration with Google OAuth for third-party login.
+| Method | Path                  | Description                        |
+|--------|-----------------------|------------------------------------|
+| POST   | /auth/register        | Register a new user                |
+| POST   | /auth/login           | User login                         |
+| GET    | /auth-methods         | List available authentication methods |
 
-## Features
+## Lists
 
-- **User Registration & Authentication**: Secure registration and login using JWT tokens. Google OAuth login planned.
-- **Personal Lists**: Users can create, update, and delete their own lists.
-- **List Items**: Add, update, and remove items from lists, including marking items as completed.
-- **List Sharing**: Share lists with other users, granting them view or edit access.
-- **Collaborative Editing**: Multiple users can collaborate on shared lists in real time.
+| Method | Path                        | Description                |
+|--------|-----------------------------|----------------------------|
+| GET    | /lists                      | Get all lists for the user |
+| POST   | /lists                      | Create a new list          |
+| GET    | /lists/{list_id}            | Get a specific list        |
+| PUT    | /lists/{list_id}            | Update a list              |
+| DELETE | /lists/{list_id}            | Delete a list              |
 
-## API Endpoints
+### Tasks
 
-### Authentication
+| Method | Path                                         | Description              |
+|--------|----------------------------------------------|--------------------------|
+| POST   | /lists/{list_id}/tasks                       | Add a task to a list     |
+| PUT    | /lists/{list_id}/tasks/{task_id}             | Update a task in a list  |
 
-| Method | Path             | Description                                 |
-|--------|------------------|---------------------------------------------|
-| POST   | /auth/register   | Register a new user                         |
-| POST   | /auth/login      | Authenticate and receive a JWT              |
-| POST   | /auth/logout     | Invalidate the current user's session/JWT   |
+## Sharing
 
-### User Management
+| Method | Path                                 | Description                |
+|--------|--------------------------------------|----------------------------|
+| POST   | /lists/{list_id}/share               | Share a list with a user   |
+| GET    | /invites                            | Get all invites for user   |
+| POST   | /invites/{invite_id}/accept         | Accept an invite           |
+| POST   | /invites/{invite_id}/reject         | Reject an invite           |
 
-| Method | Path      | Description                                 |
-|--------|-----------|---------------------------------------------|
-| GET    | /users/me | Get the current user's profile               |
+---
 
-### List Management
+## Data Models
 
-| Method | Path                | Description                                 |
-|--------|---------------------|---------------------------------------------|
-| POST   | /lists              | Create a new list                           |
-| GET    | /lists              | Get all accessible lists                    |
-| GET    | /lists/:listId      | Get details of a specific list              |
-| PUT    | /lists/:listId      | Update a list's properties                  |
-| DELETE | /lists/:listId      | Delete a list (owner only)                  |
+### users
 
-### List Sharing
+- id: UUID
+- email: str (unique)
+- hashed_password: str
+- created_at: datetime
 
-| Method | Path                          | Description                                 |
-|--------|-------------------------------|---------------------------------------------|
-| GET    | /lists/:listId/users          | Get users with access to a list             |
-| POST   | /lists/:listId/users          | Share a list with another user              |
-| DELETE | /lists/:listId/users/:userId  | Remove a user's access to a list            |
+### lists
 
-### List Items
+- id: UUID
+- title: str
+- owner_id: UUID (foreign key to users.id)
+- created_at: datetime
+- updated_at: datetime
 
-| Method | Path                                 | Description                                 |
-|--------|--------------------------------------|---------------------------------------------|
-| POST   | /lists/:listId/items                 | Add an item to a list                       |
-| PUT    | /lists/:listId/items/:itemId         | Update an item's properties                 |
-| DELETE | /lists/:listId/items/:itemId         | Delete an item from a list                  |
+### tasks
 
-## Database Structure
+- id: UUID
+- list_id: UUID (foreign key to lists.id)
+- title: str
+- completed: bool
+- created_at: datetime
+- updated_at: datetime
 
-The application uses a relational database with the following tables:
+### list_shares
 
-- **users**: Stores user accounts, including support for Google OAuth (`google_id` column).
-- **lists**: Stores lists and their owners.
-- **list_items**: Stores items within each list.
-- **list_users**: Junction table for many-to-many user-list sharing.
+- list_id: UUID (foreign key to lists.id)
+- user_id: UUID (foreign key to users.id)
+- role: ENUM('owner', 'editor', 'viewer')
+- invited_at: datetime
+- accepted_at: datetime
 
-## Google OAuth Integration (Planned)
+---
 
-- `GET /auth/google`: Redirects to Google for OAuth login.
-- `GET /auth/google/callback`: Handles Google callback, logs in or registers the user.
-- The `users` table includes a `google_id` column for this purpose.
+## Project Structure Example
 
-## Technology Stack
-
-- Java 21
-- Spring Boot 3.x
-- JWT for authentication
-- Maven for build management
-- Nix for development environment
-- (Planned) Google OAuth2 integration
-
-## Getting Started
-
-1. **Clone the repository**
-2. **Set up the environment** (Nix or install Java 21 & Maven)
-3. **Run the backend**:
-
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-4. **API Documentation**: See this README and `/TODO.md` for endpoint details.
-
-## Contributing
-
-Contributions are welcome! Please open issues or submit pull requests for new features, bug fixes, or improvements.
-
-## License
-
-This project is licensed under the MIT License.
+```
+task_list_app/
+│
+├── main.py                  # App entry point
+├── requirements.txt         # Dependencies
+├── .env                     # Environment variables
+│
+├── core/
+│   └── config.py            # Settings loader
+│
+├── models/                  # ORM Models
+│   ├── user.py
+│   ├── list.py
+│   ├── task.py
+│   └── list_share.py
+│
+├── schemas/                 # Pydantic models
+│   ├── auth.py
+│   ├── list.py
+│   ├── task.py
+│   └── share.py
+│
+├── services/                # Business logic
+│   ├── auth_service.py
+│   ├── list_service.py
+│   └── share_service.py
+│
+├── api/
+│   └── v1/
+│       ├── auth.py          # Auth routes
+│       ├── lists.py         # List CRUD
+│       ├── tasks.py         # Task CRUD
+│       └── shares.py        # Sharing logic
+│
+├── auth/
+│   ├── security.py          # JWT, password hashing
+│   └── dependencies.py      # get_current_user etc.
+│
+└── utils/
+    └── helpers.py           # Helper functions
+```
