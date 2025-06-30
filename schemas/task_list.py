@@ -9,7 +9,7 @@ from schemas.share import ShareRead
 class TaskListRead(BaseModel):
     id: int
     title: str
-    description: str
+    description: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     owner_id: int
@@ -21,7 +21,7 @@ class TaskListRead(BaseModel):
 
 class TaskListCreate(BaseModel):
     title: str
-    description: str
+    description: Optional[str] = None
 
 
 class TaskListUpdate(BaseModel):

@@ -89,15 +89,15 @@
         - [x] POST /auth/register
         - [x] POST /auth/login
         - [ ] GET /auth-methods
-    - [ ] Implement list endpoints (`api/v1/lists.py`)
-        - [ ] GET /lists
-        - [ ] POST /lists
-        - [ ] GET /lists/{list_id}
-        - [ ] PUT /lists/{list_id}
-        - [ ] DELETE /lists/{list_id}
-    - [ ] Implement task endpoints (`api/v1/tasks.py`)
-        - [ ] POST /lists/{list_id}/tasks
-        - [ ] PUT /lists/{list_id}/tasks/{task_id}
+    - [x] Implement list endpoints (`api/v1/lists.py`)
+        - [x] GET /lists
+        - [x] POST /lists
+        - [x] GET /lists/{list_id}
+        - [x] PUT /lists/{list_id}
+        - [x] DELETE /lists/{list_id}
+    - [x] Implement task endpoints (`api/v1/tasks.py`)
+        - [x] POST /lists/{list_id}/tasks
+        - [x] PUT /lists/{list_id}/tasks/{task_id}
     - [ ] Implement sharing endpoints (`api/v1/shares.py`)
         - [ ] POST /lists/{list_id}/share
         - [ ] GET /invites

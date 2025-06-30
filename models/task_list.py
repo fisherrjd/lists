@@ -7,13 +7,14 @@ from models import Base
 # --- Pydantic Schemas for User ---
 from pydantic import BaseModel
 from datetime import datetime as dt
+from typing import Optional
 
 
 class TaskList(Base):
     __tablename__ = "task_lists"  # Table name in the database
     id = Column(Integer, primary_key=True, index=True)  # Unique user ID
     title = Column(String, index=True, nullable=False)  # List title
-    description = Column(String, nullable=False)  # Hashed password
+    description = Column(String, nullable=True)  # Now optional
     created_at = Column(
         DateTime, default=datetime.datetime.utcnow
     )  # When the user was created
@@ -34,11 +35,11 @@ class TaskList(Base):
 
 class ListBase(BaseModel):
     title: str
-    description: str
+    description: Optional[str] = None
 
 
 class ListCreate(ListBase):
-    pass  # For now, just name and description
+    pass
 
 
 class ListRead(ListBase):

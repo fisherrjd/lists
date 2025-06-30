@@ -4,6 +4,10 @@ from sqlalchemy.orm import relationship
 import datetime
 from models import Base
 
+# --- Pydantic Schemas for User ---
+from pydantic import BaseModel
+from datetime import datetime as dt
+
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -20,11 +24,6 @@ class Task(Base):
     )
 
     task_list = relationship("TaskList", back_populates="tasks")
-
-
-# --- Pydantic Schemas for User ---
-from pydantic import BaseModel
-from datetime import datetime as dt
 
 
 class TaskBase(BaseModel):
