@@ -59,45 +59,45 @@
         - [x] ShareUpdate (accepted_at, role)
 
 4. **Authentication & Authorization**
-    - [ ] Implement password hashing utilities in `auth/security.py`
-    - [ ] Implement JWT token creation and verification in `auth/security.py`
-    - [ ] Create dependency for getting current user in `auth/dependencies.py`
-    - [ ] Add role-based access checks (owner, editor, viewer)
+    - [x] Implement password hashing utilities in `auth/security.py`
+    - [x] Implement JWT token creation and verification in `auth/security.py`
+    - [x] Create dependency for getting current user in `auth/dependencies.py`
+    - [x] Add role-based access checks (owner, editor, viewer)
 
 5. **Business Logic Services**
-    - [ ] Implement authentication service (`services/auth_service.py`)
-        - [ ] Register user
-        - [ ] Authenticate user and issue JWT
+    - [x] Implement authentication service (`services/auth_service.py`)
+        - [x] Register user
+        - [x] Authenticate user and issue JWT
     - [ ] Implement list service (`services/list_service.py`)
         - [ ] Create list
         - [ ] Get all lists for user
         - [ ] Get single list
         - [ ] Update list
         - [ ] Delete list
-    - [ ] Implement task service (`services/list_service.py` or `services/task_service.py`)
-        - [ ] Add task to list
-        - [ ] Update task
-        - [ ] Mark task as completed
-        - [ ] Delete task
+    - [x] Implement task service (`services/list_service.py` or `services/task_service.py`)
+        - [x] Add task to list
+        - [x] Update task
+        - [x] Mark task as completed
+        - [x] Delete task
     - [ ] Implement share service (`services/share_service.py`)
         - [ ] Share list with user
         - [ ] Accept/reject invite
         - [ ] List invites
 
 6. **API Endpoints**
-    - [ ] Implement auth endpoints (`api/v1/auth.py`)
-        - [ ] POST /auth/register
-        - [ ] POST /auth/login
+    - [x] Implement auth endpoints (`api/v1/auth.py`)
+        - [x] POST /auth/register
+        - [x] POST /auth/login
         - [ ] GET /auth-methods
-    - [ ] Implement list endpoints (`api/v1/lists.py`)
-        - [ ] GET /lists
-        - [ ] POST /lists
-        - [ ] GET /lists/{list_id}
-        - [ ] PUT /lists/{list_id}
-        - [ ] DELETE /lists/{list_id}
-    - [ ] Implement task endpoints (`api/v1/tasks.py`)
-        - [ ] POST /lists/{list_id}/tasks
-        - [ ] PUT /lists/{list_id}/tasks/{task_id}
+    - [x] Implement list endpoints (`api/v1/lists.py`)
+        - [x] GET /lists
+        - [x] POST /lists
+        - [x] GET /lists/{list_id}
+        - [x] PUT /lists/{list_id}
+        - [x] DELETE /lists/{list_id}
+    - [x] Implement task endpoints (`api/v1/tasks.py`)
+        - [x] POST /lists/{list_id}/tasks
+        - [x] PUT /lists/{list_id}/tasks/{task_id}
     - [ ] Implement sharing endpoints (`api/v1/shares.py`)
         - [ ] POST /lists/{list_id}/share
         - [ ] GET /invites
