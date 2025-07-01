@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from enum import Enum
 import datetime
@@ -19,7 +19,7 @@ class ListShare(Base):
     )
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     role = Column(String, nullable=False)  # Should match RoleEnum values
-    invited_at = Column(DateTime, default=datetime.datetime.utcnow)
+    invited_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     accepted_at = Column(DateTime, nullable=True)
 
     # Relationships

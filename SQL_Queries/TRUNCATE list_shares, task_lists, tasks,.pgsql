@@ -1,0 +1,1 @@
+TRUNCATE list_shares, task_lists, tasks, users

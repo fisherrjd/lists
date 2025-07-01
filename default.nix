@@ -20,6 +20,9 @@ let
       jfmt
       nixup
     ];
+    python = [
+      black
+    ];
     uv = [ uv uvEnv ];
     scripts = pkgs.lib.attrsets.attrValues scripts;
   };

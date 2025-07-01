@@ -16,7 +16,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)  # User's email
     hashed_password = Column(String, nullable=False)  # Hashed password
     created_at = Column(
-        DateTime, default=datetime.datetime.utcnow
+        DateTime, default=datetime.datetime.now(datetime.timezone.utc)
     )  # When the user was created
 
     # Relationships (these connect to other tables/models)

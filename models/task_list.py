@@ -16,10 +16,12 @@ class TaskList(Base):
     title = Column(String, index=True, nullable=False)  # List title
     description = Column(String, nullable=True)  # Now optional
     created_at = Column(
-        DateTime, default=datetime.datetime.utcnow
+        DateTime, default=datetime.datetime.now(datetime.timezone.utc)
     )  # When the user was created
     updated_at = Column(
-        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+        DateTime,
+        default=datetime.datetime.now(datetime.timezone.utc),
+        onupdate=datetime.datetime.now(datetime.timezone.utc),
     )
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 

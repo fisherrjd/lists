@@ -18,9 +18,11 @@ class Task(Base):
     title = Column(String, nullable=False)  # renamed from thing for clarity
     completed = Column(Boolean, default=False)
     quantity = Column(Integer, nullable=True)  # Optional quantity field
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     updated_at = Column(
-        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+        DateTime,
+        default=datetime.datetime.now(datetime.timezone.utc),
+        onupdate=datetime.datetime.now(datetime.timezone.utc),
     )
 
     task_list = relationship("TaskList", back_populates="tasks")
