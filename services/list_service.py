@@ -1,4 +1,4 @@
-from models.sqlmodels.task_list import TaskList
+from models.task_list import TaskList
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.task_list import TaskListCreate, TaskListUpdate

@@ -1,4 +1,4 @@
-from models.sqlmodels.user import User
+from models.user import User
 from sqlalchemy.orm import Session
 from schemas.user import UserCreate
 from auth.security import (

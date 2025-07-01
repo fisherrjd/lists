@@ -12,10 +12,10 @@ from sqlmodel import SQLModel
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from models.sqlmodels.user import User
-from models.sqlmodels.task_list import TaskList
-from models.sqlmodels.task import Task
-from models.sqlmodels.list_share import ListShare
+from models.user import User
+from models.task_list import TaskList
+from models.task import Task
+from models.list_share import ListShare
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

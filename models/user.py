@@ -1,40 +1,23 @@
 # --- SQLAlchemy User Model ---
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
+from sqlmodel import Field, Relationship, SQLModel
 import datetime
-from models import Base
+import uuid
+from typing import List, TYPE_CHECKING
 
-# --- Pydantic Schemas for User ---
-from pydantic import BaseModel
-from datetime import datetime as dt
-
-
-class User(Base):
-    __tablename__ = "users"  # Table name in the database
-
-    id = Column(Integer, primary_key=True, index=True)  # Unique user ID
-    email = Column(String, unique=True, index=True, nullable=False)  # User's email
-    hashed_password = Column(String, nullable=False)  # Hashed password
-    created_at = Column(
-        DateTime, default=datetime.datetime.now(datetime.timezone.utc)
-    )  # When the user was created
-
-    # Relationships (these connect to other tables/models)
-    task_lists = relationship("TaskList", back_populates="owner")  # User's task lists
-    shares = relationship("ListShare", back_populates="user")  # Shared lists
+if TYPE_CHECKING:
+    from .task_list import TaskList
+    from .list_share import ListShare
 
 
-class UserBase(BaseModel):
-    email: str  # Only the email field
-
-
-class UserCreate(UserBase):
-    password: str  # Used for registration (plain password, will be hashed)
-
-
-class UserRead(UserBase):
-    id: int
-    created_at: dt
-
-    class Config:
-        orm_mode = True  # Allows Pydantic to work with SQLAlchemy models
+class User(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    email: str
+    username: str
+    hashed_password: str
+    created_at: datetime.datetime = Field(
+        default_factory=datetime.datetime.now(datetime.timezone.utc)
+    )
+    task_lists: list["TaskList"] = Relationship(
+        back_populates="owner"
+    )  # User's task lists
+    shares: list["ListShare"] = Relationship(back_populates="user")  # Shared lists

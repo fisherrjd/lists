@@ -1,4 +1,4 @@
-from models.sqlmodels.list_share import ListShare, RoleEnum
+from models.list_share import ListShare, RoleEnum
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.share import ShareCreate, ShareUpdate
