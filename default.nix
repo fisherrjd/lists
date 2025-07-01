@@ -9,6 +9,7 @@
 let
   name = "lists-backend";
 
+  pg = pkgs.postgresql_17.withPackages (p: with p; [ pgvector ]);
   uvEnv = pkgs.uv-nix.mkEnv {
     inherit name; python = pkgs.python313;
     workspaceRoot = pkgs.nix-gitignore.gitignoreSource [ ".git" ] ./.;
@@ -27,7 +28,11 @@ let
     scripts = pkgs.lib.attrsets.attrValues scripts;
   };
 
-  scripts = with pkgs; { };
+  scripts = with pkgs; {
+    pg = __pg { postgres = pg; };
+    pg_bootstrap = __pg_bootstrap { inherit name; postgres = pg; };
+    pg_shell = __pg_shell { inherit name; postgres = pg; };
+  };
   paths = pkgs.lib.flatten [ (builtins.attrValues tools) ];
   env = pkgs.buildEnv {
     inherit name paths; buildInputs = paths;
