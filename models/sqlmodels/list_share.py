@@ -1,7 +1,7 @@
 from models.sqlmodels.task_list import TaskList
 from models.sqlmodels.user import User
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodels import Field, Relationship, SQLModel
 from enum import Enum
 import datetime
 import uuid

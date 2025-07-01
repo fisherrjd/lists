@@ -1,5 +1,5 @@
 # --- SQLAlchemy User Model ---
-from sqlmodel import Field, ForeignKey, Relationship, SQLModel, Integer
+from sqlmodels import Field, Relationship, SQLModel
 from typing import Optional
 import datetime
 import uuid

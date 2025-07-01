@@ -1,5 +1,6 @@
 # --- SQLAlchemy User Model ---
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodels import Field, Relationship, SQLModel
+from typing import Optional
 import datetime
 import uuid
 
@@ -8,7 +9,7 @@ class TaskList(SQLModel, table=True):
     # __tablename__ = "task_lists"  # Table name in the database
     id: uuid.UUID | None = Field(default_factory=uuid.uuid4, primary_key=True)
     title: str  # List title
-    description: str  # Now optional
+    description: Optional[str]  # Now optional
     created_at: datetime = Field(
         default_factory=datetime.datetime.now(datetime.timezone.utc)
     )
