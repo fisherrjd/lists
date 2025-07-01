@@ -1,8 +1,9 @@
 # --- SQLAlchemy User Model ---
-from sqlmodels import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from typing import Optional
 import datetime
 import uuid
+from models.sqlmodels.task_list import TaskList
 
 
 class Task(SQLModel):
@@ -19,4 +20,4 @@ class Task(SQLModel):
         default_factory=datetime.datetime.now(datetime.timezone.utc), primary_key=True
     )
 
-    task_list = Relationship("TaskList", back_populates="tasks")
+    task_list: Optional["TaskList"] = Relationship(back_populates="tasks")
