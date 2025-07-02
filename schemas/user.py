@@ -2,16 +2,18 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 
 
 class UserRead(BaseModel):
-    id: int
+    id: UUID
     email: str
+    username: str
     created_at: datetime
 
 
 class UserCreate(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
     @field_validator("password")
@@ -34,4 +36,5 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     email: Optional[str] = None
+    username: Optional[str] = None
     password: Optional[str] = None

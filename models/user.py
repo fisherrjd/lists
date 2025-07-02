@@ -1,6 +1,6 @@
 # --- SQLAlchemy User Model ---
 from sqlmodel import Field, Relationship, SQLModel
-import datetime
+from datetime import datetime, timezone
 import uuid
 from typing import List, TYPE_CHECKING
 
@@ -14,9 +14,7 @@ class User(SQLModel, table=True):
     email: str
     username: str
     hashed_password: str
-    created_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now(datetime.timezone.utc)
-    )
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     task_lists: list["TaskList"] = Relationship(
         back_populates="owner"
     )  # User's task lists

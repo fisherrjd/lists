@@ -3,7 +3,7 @@ from models.user import User
 
 from sqlmodel import Field, Relationship, SQLModel
 from enum import Enum
-import datetime
+from datetime import datetime, timezone
 import uuid
 from typing import Optional
 from sqlalchemy import Column, Enum as SAEnum
@@ -20,10 +20,8 @@ class ListShare(SQLModel, table=True):
     task_list_id: uuid.UUID = Field(foreign_key="tasklist.id")
     user_id: uuid.UUID = Field(foreign_key="user.id")
     role: RoleEnum = Field(sa_column=Column(SAEnum(RoleEnum), nullable=False))
-    invited_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now(datetime.timezone.utc)
-    )
-    accepted_at: Optional[datetime.datetime] = None
+    invited_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    accepted_at: Optional[datetime] = None
 
     task_list: Optional["TaskList"] = Relationship(back_populates="shares")
     user: Optional["User"] = Relationship(back_populates="shares")

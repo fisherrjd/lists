@@ -19,7 +19,9 @@ def register_user(db: Session, user_in: UserCreate) -> User:
     # Hash the password
     hashed_password = hash_password(user_in.password)
     # Create user instance
-    user = User(email=user_in.email, hashed_password=hashed_password)
+    user = User(
+        email=user_in.email, username=user_in.username, hashed_password=hashed_password
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -27,7 +29,7 @@ def register_user(db: Session, user_in: UserCreate) -> User:
 
 
 def authenticate_user(db: Session, user_in: UserCreate) -> User:
-    existing = db.query(User).filter(User.email == user_in.email).first()
+    existing = db.query(User).filter(User.username == user_in.username).first()
     if not existing or not verify_password(user_in.password, existing.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
