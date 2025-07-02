@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     PGPORT: int = Field(..., env="PGPORT")
     postgres_db: str = Field(..., env="POSTGRES_DB")
     postgres_user: str = Field(..., env="POSTGRES_USER")
-    postgres_password: str = Field(..., env="POSTGRES_PASSWORD")
 
     # JWT config (secrets from .env or environment)
     secret_key: str = Field(..., env="SECRET_KEY")
@@ -22,7 +21,7 @@ class Settings(BaseSettings):
     @property
     def database_url(self):
         return (
-            f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
+            f"postgresql+psycopg2://{self.postgres_user}"
             f"@{self.postgres_host}:{self.PGPORT}/{self.postgres_db}"
         )
 

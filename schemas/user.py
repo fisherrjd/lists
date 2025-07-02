@@ -5,16 +5,13 @@ from datetime import datetime
 from uuid import UUID
 
 
-class UserRead(BaseModel):
-    id: UUID
-    email: str
-    username: str
-    created_at: datetime
-
-
-class UserCreate(BaseModel):
+class UserLogin(BaseModel):
     username: str
     password: str
+
+
+class UserCreate(UserLogin):
+    email: str
 
     @field_validator("password")
     def password_complexity(cls, v):
@@ -32,6 +29,11 @@ class UserCreate(BaseModel):
                 f"Password must include a special character: {special_chars}"
             )
         return v
+
+
+class UserRead(UserCreate):
+    id: UUID
+    created_at: datetime
 
 
 class UserUpdate(BaseModel):

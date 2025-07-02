@@ -1,6 +1,6 @@
 from models.user import User
 from sqlalchemy.orm import Session
-from schemas.user import UserCreate
+from schemas.user import UserCreate, UserLogin
 from auth.security import (
     hash_password,
     create_access_token as jwt_create_access_token,
@@ -28,12 +28,12 @@ def register_user(db: Session, user_in: UserCreate) -> User:
     return user
 
 
-def authenticate_user(db: Session, user_in: UserCreate) -> User:
+def authenticate_user(db: Session, user_in: UserLogin) -> User:
     existing = db.query(User).filter(User.username == user_in.username).first()
     if not existing or not verify_password(user_in.password, existing.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password.",
+            detail="Invalid username or password.",
         )
     return existing
 
