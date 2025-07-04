@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from core.config import settings
+import pytest
 
 
 def test_database_connection():
@@ -8,10 +9,5 @@ def test_database_connection():
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-        print("Database connection successful!")
     except OperationalError as e:
-        print(f"Database connection failed: {e}")
-
-
-if __name__ == "__main__":
-    test_database_connection()
+        pytest.fail(f"Database connection failed: {e}")
