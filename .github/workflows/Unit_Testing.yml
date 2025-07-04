@@ -12,6 +12,7 @@ jobs:
           POSTGRES_USER: lists-backend
           POSTGRES_PASSWORD: ""
           POSTGRES_DB: lists-backend-test
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: >-
