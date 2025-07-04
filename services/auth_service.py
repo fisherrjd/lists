@@ -1,6 +1,7 @@
 from models.user import User
 from sqlalchemy.orm import Session
 from schemas.user import UserCreate, UserLogin
+from datetime import datetime
 from auth.security import (
     hash_password,
     create_access_token as jwt_create_access_token,
@@ -40,5 +41,10 @@ def authenticate_user(db: Session, user_in: UserLogin) -> User:
 
 def create_access_token(user: User) -> str:
     # You can customize payload as needed
-    payload = {"sub": str(user.id)}
+    payload = {
+        "sub": str(user.id),
+        "username": str(user.username),
+        "email": str(user.email),
+        "created": str(user.created_at.isoformat()),
+    }
     return jwt_create_access_token(payload)
