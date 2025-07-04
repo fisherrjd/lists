@@ -115,5 +115,3 @@ task_list_app/
 └── utils/
     └── helpers.py           # Helper functions
 ```
-
-test
