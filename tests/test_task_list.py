@@ -11,6 +11,10 @@ def test_get_lists(client):
     pass  # TODO: Implement get lists test
 
 
+def test_get_unique_list(client):
+    pass  # TODO: Implement get lists test
+
+
 def test_update_list(client):
     pass  # TODO: Implement update list test
 
