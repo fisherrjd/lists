@@ -23,6 +23,13 @@ def get_current_user(
     )
     try:
         payload = decode_access_token(token)
+        # Check for expiration
+        exp = payload.get("exp")
+        if exp is not None:
+            import time
+
+            if exp < int(time.time()):
+                raise credentials_exception
         user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception

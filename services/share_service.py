@@ -2,10 +2,11 @@ from models.list_share import ListShare, RoleEnum
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.share import ShareCreate, ShareUpdate
+from uuid import UUID
 
 
 def share_list_with_user(
-    db: Session, owner_id: int, list_id: int, share_in: ShareCreate
+    db: Session, owner_id: UUID, list_id: UUID, share_in: ShareCreate
 ) -> ListShare:
     # Optionally, check if the user to share with is not the owner
     if share_in.user_id == owner_id:
@@ -30,17 +31,17 @@ def share_list_with_user(
     return new_share
 
 
-def accept_invite(db: Session, invite_id: int, update_in: ShareUpdate) -> ListShare:
+def accept_invite(db: Session, invite_id: UUID, update_in: ShareUpdate) -> ListShare:
     # TODO: Implement accepting an invite
     pass
 
 
-def reject_invite(db: Session, invite_id: int) -> None:
+def reject_invite(db: Session, invite_id: UUID) -> None:
     # TODO: Implement rejecting an invite
     pass
 
 
-def list_invites(db: Session, user_id: int) -> List[ListShare]:
+def list_invites(db: Session, user_id: UUID) -> List[ListShare]:
     invites = (
         db.query(ListShare)
         .filter(ListShare.user_id == user_id, ListShare.accepted_at is None)

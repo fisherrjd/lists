@@ -15,11 +15,11 @@ def create_list(db: Session, user_id: UUID, list_in: TaskListCreate) -> TaskList
     return new_list
 
 
-def get_lists_for_user(db: Session, user_id: int) -> List[TaskList]:
+def get_lists_for_user(db: Session, user_id: UUID) -> List[TaskList]:
     return db.query(TaskList).filter(TaskList.owner_id == user_id).all()
 
 
-def get_list(db: Session, list_id: int) -> TaskList:
+def get_list(db: Session, list_id: UUID) -> TaskList:
     result = db.query(TaskList).filter(TaskList.id == list_id).first()
     if not result:
         from fastapi import HTTPException
@@ -28,7 +28,7 @@ def get_list(db: Session, list_id: int) -> TaskList:
     return result
 
 
-def update_list(db: Session, list_id: int, list_in: TaskListUpdate) -> TaskList:
+def update_list(db: Session, list_id: UUID, list_in: TaskListUpdate) -> TaskList:
     task_list = db.query(TaskList).filter(TaskList.id == list_id).first()
     if not task_list:
         from fastapi import HTTPException
@@ -43,7 +43,7 @@ def update_list(db: Session, list_id: int, list_in: TaskListUpdate) -> TaskList:
     return task_list
 
 
-def delete_list(db: Session, list_id: int) -> None:
+def delete_list(db: Session, list_id: UUID) -> None:
     task_list = db.query(TaskList).filter(TaskList.id == list_id).first()
     if not task_list:
         from fastapi import HTTPException

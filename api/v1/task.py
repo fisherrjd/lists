@@ -34,7 +34,7 @@ def update_task(
 
 @router.post("/{task_id}/complete", response_model=TaskRead)
 def mark_completed(
-    task_id: int,
+    task_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
