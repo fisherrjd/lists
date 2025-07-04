@@ -2,9 +2,10 @@ from models.task_list import TaskList
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.task_list import TaskListCreate, TaskListUpdate
+from uuid import UUID
 
 
-def create_list(db: Session, user_id: int, list_in: TaskListCreate) -> TaskList:
+def create_list(db: Session, user_id: UUID, list_in: TaskListCreate) -> TaskList:
     new_list = TaskList(
         title=list_in.title, description=list_in.description, owner_id=user_id
     )

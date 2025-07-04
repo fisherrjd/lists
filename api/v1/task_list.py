@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.task_list import TaskListCreate, TaskListUpdate, TaskListRead
-from services import list_service
+from schemas.share import ShareCreate
+from services import list_service, share_service
 from auth.dependencies import get_current_user
 from database import get_db
 from models.user import User
+from uuid import UUID
 
 router = APIRouter(prefix="/lists", tags=["lists"])
 
@@ -28,7 +30,7 @@ def get_lists(
 
 @router.get("/{list_id}", response_model=TaskListRead)
 def get_list(
-    list_id: int,
+    list_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -42,7 +44,7 @@ def get_list(
 
 @router.put("/{list_id}", response_model=TaskListRead)
 def update_list(
-    list_id: int,
+    list_id: UUID,
     list_in: TaskListUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -57,7 +59,7 @@ def update_list(
 
 @router.delete("/{list_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_list(
-    list_id: int,
+    list_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -70,7 +72,11 @@ def delete_list(
     return None
 
 
-# - [ ] POST /lists/{list_id}/share - Create share invite
-@router.post("/{list_id}/share")
-def reject():
-    pass
+@router.post("/{list_id}/share", response_model=None)
+def share_list(
+    list_id: UUID,
+    share_in: ShareCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return share_service.share_list_with_user(db, current_user.id, list_id, share_in)

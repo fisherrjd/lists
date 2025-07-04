@@ -4,9 +4,30 @@ from typing import List
 from schemas.share import ShareCreate, ShareUpdate
 
 
-def share_list_with_user(db: Session, share_in: ShareCreate) -> ListShare:
-    # TODO: Implement sharing a list with a user
-    pass
+def share_list_with_user(
+    db: Session, owner_id: int, list_id: int, share_in: ShareCreate
+) -> ListShare:
+    # Optionally, check if the user to share with is not the owner
+    if share_in.user_id == owner_id:
+        raise ValueError("Cannot share a list with yourself.")
+    # Check if a share already exists
+    existing = (
+        db.query(ListShare)
+        .filter(
+            ListShare.task_list_id == list_id, ListShare.user_id == share_in.user_id
+        )
+        .first()
+    )
+    if existing:
+        raise ValueError("User already invited to this list.")
+    # Create the share invite
+    new_share = ListShare(
+        task_list_id=list_id, user_id=share_in.user_id, role=share_in.role
+    )
+    db.add(new_share)
+    db.commit()
+    db.refresh(new_share)
+    return new_share
 
 
 def accept_invite(db: Session, invite_id: int, update_in: ShareUpdate) -> ListShare:
@@ -20,5 +41,9 @@ def reject_invite(db: Session, invite_id: int) -> None:
 
 
 def list_invites(db: Session, user_id: int) -> List[ListShare]:
-    # TODO: Implement listing invites for a user
-    pass
+    invites = (
+        db.query(ListShare)
+        .filter(ListShare.user_id == user_id, ListShare.accepted_at is None)
+        .all()
+    )
+    return invites
