@@ -19,11 +19,22 @@ def invites(
     return invites
 
 
-@router.post("/{invite_id}/accept")
-def accept():
-    pass
+@router.post("/{invite_id}/accept", response_model=ListShareSchema)
+def accept(
+    invite_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Accept the invite using the service
+    accepted = share_service.accept_invite(db, invite_id, current_user.id)
+    return accepted
 
 
 @router.post("/{invite_id}/reject")
-def reject():
-    pass
+def reject(
+    invite_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    share_service.reject_invite(db, invite_id, current_user.id)
+    return {"detail": "Invite rejected."}

@@ -31,14 +31,33 @@ def share_list_with_user(
     return new_share
 
 
-def accept_invite(db: Session, invite_id: UUID, update_in: ShareUpdate) -> ListShare:
-    # TODO: Implement accepting an invite
-    pass
+def accept_invite(db: Session, invite_id: str, user_id: str) -> ListShare:
+    # Find the invite
+    invite = db.query(ListShare).filter(ListShare.id == invite_id).first()
+    if not invite:
+        raise ValueError("Invite not found.")
+    if str(invite.user_id) != str(user_id):
+        raise ValueError("Not authorized to accept this invite.")
+    if invite.accepted_at is not None:
+        raise ValueError("Invite already accepted.")
+    from datetime import datetime, timezone
+
+    invite.accepted_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(invite)
+    return invite
 
 
-def reject_invite(db: Session, invite_id: UUID) -> None:
-    # TODO: Implement rejecting an invite
-    pass
+def reject_invite(db: Session, invite_id: str, user_id: str) -> None:
+    invite = db.query(ListShare).filter(ListShare.id == invite_id).first()
+    if not invite:
+        raise ValueError("Invite not found.")
+    if str(invite.user_id) != str(user_id):
+        raise ValueError("Not authorized to reject this invite.")
+    if invite.accepted_at is not None:
+        raise ValueError("Cannot reject an already accepted invite.")
+    db.delete(invite)
+    db.commit()
 
 
 def list_invites(db: Session, user_id: UUID) -> List[ListShare]:
