@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
 
+
 class Settings(BaseSettings):
     # Non-secret config
     app_name: str = "lists"
@@ -9,24 +10,24 @@ class Settings(BaseSettings):
 
     # Database config (secrets from .env or environment)
     postgres_host: str = Field(..., env="POSTGRES_HOST")
-    postgres_port: int = Field(..., env="POSTGRES_PORT")
+    PGPORT: int = Field(..., env="PGPORT")
     postgres_db: str = Field(..., env="POSTGRES_DB")
     postgres_user: str = Field(..., env="POSTGRES_USER")
-    postgres_password: str = Field(..., env="POSTGRES_PASSWORD")
 
     # JWT config (secrets from .env or environment)
     secret_key: str = Field(..., env="SECRET_KEY")
     algorithm: str = "HS256"
 
-
     @property
     def database_url(self):
         return (
-            f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
-            f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+            f"postgresql+psycopg2://{self.postgres_user}"
+            f"@{self.postgres_host}:{self.PGPORT}/{self.postgres_db}"
         )
 
     class Config:
         env_file = ".env"
+        extra = "allow"  # Allow extra config values not explicitly defined
+
 
 settings = Settings()

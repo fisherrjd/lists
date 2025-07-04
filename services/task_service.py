@@ -1,22 +1,24 @@
 from models.task import Task
 from sqlalchemy.orm import Session
-from typing import List
 from schemas.task import TaskCreate, TaskUpdate
 from fastapi import HTTPException
+from uuid import UUID
 
-def add_task_to_list(db: Session, list_id: int, task_in: TaskCreate) -> Task:
+
+def add_task_to_list(db: Session, list_id: UUID, task_in: TaskCreate) -> Task:
     task = Task(
         title=task_in.title,
         completed=task_in.completed,
         quantity=task_in.quantity,  # Pass quantity
-        task_list_id=list_id
+        task_list_id=list_id,
     )
     db.add(task)
     db.commit()
     db.refresh(task)
     return task
 
-def update_task(db: Session, task_id: int, task_in: TaskUpdate) -> Task:
+
+def update_task(db: Session, task_id: UUID, task_in: TaskUpdate) -> Task:
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -30,10 +32,12 @@ def update_task(db: Session, task_id: int, task_in: TaskUpdate) -> Task:
     db.refresh(task)
     return task
 
-def mark_task_completed(db: Session, task_id: int) -> Task:
+
+def mark_task_completed(db: Session, task_id: UUID) -> Task:
     return update_task(db, task_id, TaskUpdate(completed=True))
 
-def delete_task(db: Session, task_id: int) -> None:
+
+def delete_task(db: Session, task_id: UUID) -> None:
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")

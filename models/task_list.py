@@ -1,52 +1,25 @@
 # --- SQLAlchemy User Model ---
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-import datetime
-from models import Base
+from sqlmodel import Field, Relationship, SQLModel
+from typing import List, Optional, TYPE_CHECKING
+from datetime import datetime, timezone
+import uuid
 
-# --- Pydantic Schemas for User ---
-from pydantic import BaseModel
-from datetime import datetime as dt
-from typing import Optional
+if TYPE_CHECKING:
+    from .task import Task
+    from .list_share import ListShare
+    from .user import User
 
 
-class TaskList(Base):
-    __tablename__ = "task_lists"  # Table name in the database
-    id = Column(Integer, primary_key=True, index=True)  # Unique user ID
-    title = Column(String, index=True, nullable=False)  # List title
-    description = Column(String, nullable=True)  # Now optional
-    created_at = Column(
-        DateTime, default=datetime.datetime.utcnow
-    )  # When the user was created
-    updated_at = Column(
-        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
-    )
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+class TaskList(SQLModel, table=True):
+    # __tablename__ = "task_lists"  # Table name in the database
+    id: uuid.UUID | None = Field(default_factory=uuid.uuid4, primary_key=True)
+    title: str  # List title
+    description: Optional[str]  # Now optional
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    owner_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)  # look into more
 
     # Relationships (these connect to other tables/models)
-    owner = relationship("User", back_populates="task_lists")
-    shares = relationship(
-        "ListShare", back_populates="task_list", cascade="all, delete-orphan"
-    )
-    tasks = relationship(
-        "Task", back_populates="task_list", cascade="all, delete-orphan"
-    )
-
-
-class ListBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-
-
-class ListCreate(ListBase):
-    pass
-
-
-class ListRead(ListBase):
-    id: int
-    created_at: dt
-    updated_at: dt
-    owner_id: int
-
-    class Config:
-        orm_mode = True
+    owner: "User" = Relationship(back_populates="task_lists")
+    shares: list["ListShare"] = Relationship(back_populates="task_list")
+    tasks: list["Task"] = Relationship(back_populates="task_list")

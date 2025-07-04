@@ -1,45 +1,20 @@
 # --- SQLAlchemy User Model ---
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
-import datetime
-from models import Base
+from sqlmodel import Field, Relationship, SQLModel
+from typing import Optional
+from datetime import datetime, timezone
 
-# --- Pydantic Schemas for User ---
-from pydantic import BaseModel
-from datetime import datetime as dt
+import uuid
+from models.task_list import TaskList
 
 
-class Task(Base):
-    __tablename__ = "tasks"
-    id = Column(Integer, primary_key=True, index=True)
-    task_list_id = Column(
-        Integer, ForeignKey("task_lists.id", ondelete="CASCADE"), nullable=False
-    )
-    title = Column(String, nullable=False)  # renamed from thing for clarity
-    completed = Column(Boolean, default=False)
-    quantity = Column(Integer, nullable=True)  # Optional quantity field
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
-    )
-
-    task_list = relationship("TaskList", back_populates="tasks")
-
-
-class TaskBase(BaseModel):
+class Task(SQLModel, table=True):
+    # __tablename__ = "tasks"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    task_list_id: uuid.UUID = Field(foreign_key="tasklist.id")
     title: str
-    completed: bool = False
+    completed: bool
+    quantity: Optional[int]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-
-class TaskCreate(TaskBase):
-    pass
-
-
-class TaskRead(TaskBase):
-    id: int
-    task_list_id: int
-    created_at: dt
-    updated_at: dt
-
-    class Config:
-        orm_mode = True
+    task_list: Optional["TaskList"] = Relationship(back_populates="tasks")

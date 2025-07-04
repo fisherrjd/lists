@@ -1,8 +1,12 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
+from models.task_list import TaskList
+from models.user import User
+
+from sqlmodel import Field, Relationship, SQLModel
 from enum import Enum
-import datetime
-from models import Base
+from datetime import datetime, timezone
+import uuid
+from typing import Optional
+from sqlalchemy import Column, Enum as SAEnum
 
 
 class RoleEnum(str, Enum):
@@ -11,17 +15,13 @@ class RoleEnum(str, Enum):
     viewer = "viewer"
 
 
-class ListShare(Base):
-    __tablename__ = "list_shares"
-    id = Column(Integer, primary_key=True, index=True)
-    task_list_id = Column(
-        Integer, ForeignKey("task_lists.id", ondelete="CASCADE"), nullable=False
-    )
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    role = Column(String, nullable=False)  # Should match RoleEnum values
-    invited_at = Column(DateTime, default=datetime.datetime.utcnow)
-    accepted_at = Column(DateTime, nullable=True)
+class ListShare(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    task_list_id: uuid.UUID = Field(foreign_key="tasklist.id")
+    user_id: uuid.UUID = Field(foreign_key="user.id")
+    role: RoleEnum = Field(sa_column=Column(SAEnum(RoleEnum), nullable=False))
+    invited_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    accepted_at: Optional[datetime] = None
 
-    # Relationships
-    task_list = relationship("TaskList", back_populates="shares")
-    user = relationship("User", back_populates="shares")
+    task_list: Optional["TaskList"] = Relationship(back_populates="shares")
+    user: Optional["User"] = Relationship(back_populates="shares")
