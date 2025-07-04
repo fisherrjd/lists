@@ -10,7 +10,7 @@ jobs:
         image: postgres:17
         env:
           POSTGRES_USER: lists-backend
-          POSTGRES_PASSWORD: password
+          POSTGRES_PASSWORD: ""
           POSTGRES_DB: lists-backend-test
         ports:
           - 5432:5432
@@ -24,7 +24,7 @@ jobs:
       POSTGRES_HOST: localhost
       POSTGRES_DB: lists-backend-test
       POSTGRES_USER: lists-backend
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ""
       SECRET_KEY: testsecretkey
       PGPORT: 5432
  
