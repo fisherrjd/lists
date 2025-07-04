@@ -45,6 +45,6 @@ def create_access_token(user: User) -> str:
         "sub": str(user.id),
         "username": str(user.username),
         "email": str(user.email),
-        "created": str(user.created_at.isoformat()),
+        "user_created_at": str(user.created_at.isoformat()),
     }
     return jwt_create_access_token(payload)
