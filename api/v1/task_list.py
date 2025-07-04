@@ -9,52 +9,68 @@ from models.user import User
 
 router = APIRouter(prefix="/lists", tags=["lists"])
 
+
 @router.post("/", response_model=TaskListRead)
 def create_list(
     list_in: TaskListCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return list_service.create_list(db, current_user.id, list_in)
 
+
 @router.get("/", response_model=List[TaskListRead])
 def get_lists(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     return list_service.get_lists_for_user(db, current_user.id)
+
 
 @router.get("/{list_id}", response_model=TaskListRead)
 def get_list(
     list_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     result = list_service.get_list(db, list_id)
     if result.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to access this list")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access this list"
+        )
     return result
+
 
 @router.put("/{list_id}", response_model=TaskListRead)
 def update_list(
     list_id: int,
     list_in: TaskListUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     result = list_service.get_list(db, list_id)
     if result.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this list")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this list"
+        )
     return list_service.update_list(db, list_id, list_in)
+
 
 @router.delete("/{list_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_list(
     list_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     result = list_service.get_list(db, list_id)
     if result.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this list")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this list"
+        )
     list_service.delete_list(db, list_id)
     return None
+
+
+# - [ ] POST /lists/{list_id}/share - Create share invite
+@router.post("/{list_id}/share")
+def reject():
+    pass
