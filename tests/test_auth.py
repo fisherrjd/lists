@@ -20,14 +20,6 @@ def test_register(client):
 
 
 def test_login(client):
-    # Register the user first
-    register_payload = {
-        "email": "testuser@example.com",
-        "username": "testuser",
-        "password": "Testpass123!",
-    }
-    reg_response = client.post("/auth/register", json=register_payload)
-    assert reg_response.status_code == 200 or reg_response.status_code == 201
 
     # Now attempt to log in with the same credentials (form-encoded, using username)
     login_payload = {
