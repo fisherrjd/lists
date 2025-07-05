@@ -4,17 +4,22 @@ Tests for task list endpoints: /lists, /lists/{list_id}, etc.
 
 
 def login(client):
-    # Now attempt to log in with the same credentials (form-encoded, using username)
+    """Helper to log in and return an access token. Raises on failure."""
     login_payload = {
         "username": "testuser",
         "password": "Testpass123!",
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     login_response = client.post("/auth/login", data=login_payload, headers=headers)
-    assert login_response.status_code == 200 or login_response.status_code == 201
+    if not (200 <= login_response.status_code < 300):
+        raise RuntimeError(
+            f"Login failed: {login_response.status_code} {login_response.text}"
+        )
     login_data = login_response.json()
-    assert "access_token" in login_data or "token" in login_data
-    return login_data.get("access_token") or login_data.get("token")
+    token = login_data.get("access_token") or login_data.get("token")
+    if not token:
+        raise RuntimeError("No access token in login response")
+    return token
 
 
 def test_create_list(client):
