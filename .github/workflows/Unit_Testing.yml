@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: lists-runner
     services:
       postgres:
         image: postgres:17
@@ -14,7 +14,7 @@ jobs:
           POSTGRES_DB: lists-backend-test
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-          - 5432:5432
+          - 9002:9002
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -27,7 +27,7 @@ jobs:
       POSTGRES_USER: lists-backend
       POSTGRES_PASSWORD: ""
       SECRET_KEY: testsecretkey
-      PGPORT: 5432
+      PGPORT: 9002
  
       # Add any other env vars needed
 
