@@ -41,12 +41,57 @@ def test_get_lists(client):
 
 
 def test_get_unique_list(client):
-    pass  # TODO: Implement get lists test
+    token = login(client)
+    # First, create a list to ensure there is one to fetch
+    payload = {"title": "Costco", "description": "Large Weekly shopping"}
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    create_response = client.post("/lists/", json=payload, headers=headers)
+    assert create_response.status_code == 200 or create_response.status_code == 201
+    created = create_response.json()
+    list_id = created.get("id")
+    assert list_id is not None
+    # Now, fetch the unique list
+    response = client.get(f"/lists/{list_id}", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == list_id
+    assert data["title"] == payload["title"]
+    assert data["description"] == payload["description"]
 
 
 def test_update_list(client):
-    pass  # TODO: Implement update list test
+    token = login(client)
+    # Create a list to update
+    payload = {"title": "Costco", "description": "Large Weekly shopping"}
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    create_response = client.post("/lists/", json=payload, headers=headers)
+    assert create_response.status_code == 200 or create_response.status_code == 201
+    created = create_response.json()
+    list_id = created.get("id")
+    assert list_id is not None
+    # Update the list
+    update_payload = {"title": "Updated Title", "description": "Updated description"}
+    response = client.put(f"/lists/{list_id}", json=update_payload, headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == list_id
+    assert data["title"] == update_payload["title"]
+    assert data["description"] == update_payload["description"]
 
 
 def test_delete_list(client):
-    pass  # TODO: Implement delete list test
+    token = login(client)
+    # Create a list to delete
+    payload = {"title": "Costco", "description": "Large Weekly shopping"}
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    create_response = client.post("/lists/", json=payload, headers=headers)
+    assert create_response.status_code == 200 or create_response.status_code == 201
+    created = create_response.json()
+    list_id = created.get("id")
+    assert list_id is not None
+    # Delete the list
+    response = client.delete(f"/lists/{list_id}", headers=headers)
+    assert response.status_code == 200 or response.status_code == 204
+    # Confirm it is deleted
+    get_response = client.get(f"/lists/{list_id}", headers=headers)
+    assert get_response.status_code == 404
