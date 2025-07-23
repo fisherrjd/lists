@@ -23,3 +23,12 @@ jobs:
         run: alembic upgrade head
       - name: Run tests
         run: pytest
+      - name: Configure Database URL
+        run: |
+          import os
+          from your_application import context  # Adjust the import based on your project structure
+
+          config = context.config
+          db_url = os.environ.get("DATABASE_URL")
+          if db_url:
+              config.set_main_option("sqlalchemy.url", db_url)
