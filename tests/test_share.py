@@ -88,7 +88,6 @@ def test_accept_invite(client, registered_users, created_list):
 
 def test_reject_invite(client, registered_users, created_list):
     # User 0 shares the list with user 2
-    owner = registered_users[0]
     invitee = registered_users[2]
     print("Registered users:", registered_users)
     print("Created list:", created_list)
