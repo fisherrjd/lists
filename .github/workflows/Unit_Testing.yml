@@ -8,8 +8,11 @@ jobs:
 
     env:
       DATABASE_URL: "sqlite:///./pytest.db"
-      # SECRET_KEY: testsecretkey  # Uncomment if your app requires it
-      # Add any other env vars needed
+      postgres_host: "localhost"
+      PGPORT: "5432"
+      postgres_db: "test_db"
+      postgres_user: "test_user"
+      secret_key: "testsecretkey"
 
     steps:
       - uses: actions/checkout@v4
