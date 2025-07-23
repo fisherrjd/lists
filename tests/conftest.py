@@ -81,12 +81,22 @@ def registered_users(client):
         response = client.post("/auth/register", json=payload)
         assert response.status_code in (200, 201)
         data = response.json()
+        # Login to get access token
+        login_payload = {"username": username, "password": password}
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        login_response = client.post("/auth/login", data=login_payload, headers=headers)
+        assert login_response.status_code in (200, 201)
+        token = login_response.json().get("access_token") or login_response.json().get(
+            "token"
+        )
+        assert token
         users.append(
             {
                 "username": username,
                 "email": email,
                 "password": password,
                 "id": data.get("id"),
+                "access_token": token,
             }
         )
     return users

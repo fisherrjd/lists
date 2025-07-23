@@ -67,3 +67,8 @@ def list_invites(db: Session, user_id: UUID) -> List[ListShare]:
         .all()
     )
     return invites
+
+
+# New: get all shared lists (pending and accepted)
+def list_shared_with_user(db: Session, user_id: UUID) -> List[ListShare]:
+    return db.query(ListShare).filter(ListShare.user_id == user_id).all()

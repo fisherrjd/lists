@@ -7,31 +7,45 @@ from typing import List
 from schemas.list_share import ListShare as ListShareSchema
 from auth.dependencies import get_current_user
 
-router = APIRouter(prefix="/invites", tags=["auth"])
+router = APIRouter(prefix="/shared", tags=["auth"])
 
 
+# GET /shared/ : All lists shared with the current user (pending and accepted)
 @router.get("/", response_model=List[ListShareSchema])
-def invites(
+def shared_with_me(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
-    invites = share_service.list_invites(db, current_user.id)
+    """
+    Return all lists shared with the current user (pending and accepted).
+    """
+    return share_service.list_shared_with_user(db, current_user.id)
 
-    return invites
+
+# GET /shared/invites : Only pending invites for the current user
+@router.get("/invites", response_model=List[ListShareSchema])
+def pending_invites(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    """
+    Return only pending invites for the current user.
+    """
+    return share_service.list_invites(db, current_user.id)
 
 
-@router.post("/{invite_id}/accept", response_model=ListShareSchema)
-def accept(
+# POST /shared/invites/{invite_id}/accept : Accept an invite
+@router.post("/invites/{invite_id}/accept", response_model=ListShareSchema)
+def accept_invite(
     invite_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Accept the invite using the service
     accepted = share_service.accept_invite(db, invite_id, current_user.id)
     return accepted
 
 
-@router.post("/{invite_id}/reject")
-def reject(
+# POST /shared/invites/{invite_id}/reject : Reject an invite
+@router.post("/invites/{invite_id}/reject")
+def reject_invite(
     invite_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
