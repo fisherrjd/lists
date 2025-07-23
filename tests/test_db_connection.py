@@ -1,13 +1,11 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
-from core.config import settings
 import pytest
 
 
-def test_database_connection():
-    engine = create_engine(settings.database_url)
+def test_database_connection(test_db_engine):
     try:
-        with engine.connect() as connection:
+        with test_db_engine.connect() as connection:
             connection.execute(text("SELECT 1"))
     except OperationalError as e:
         pytest.fail(f"Database connection failed: {e}")

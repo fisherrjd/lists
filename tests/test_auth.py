@@ -3,40 +3,20 @@ Tests for authentication endpoints: /auth/register and /auth/login
 """
 
 
-def test_register(client):
-    import uuid
-
-    unique = str(uuid.uuid4())[:8]
-    username = f"testuser_{unique}"
-    email = f"{username}@example.com"
-    payload = {
-        "email": email,
-        "username": username,
-        "password": "Testpass123!",
-    }
-    response = client.post("/auth/register", json=payload)
-    assert response.status_code in (200, 201)
-    data = response.json()
-    assert "email" in data
-    assert data["email"] == payload["email"]
-    assert "username" in data
-    assert data["username"] == payload["username"]
-    assert "id" in data
+def test_register(registered_users):
+    # Test that 3 users were registered and have expected fields
+    assert len(registered_users) == 3
+    for user in registered_users:
+        assert "username" in user
+        assert "email" in user
+        assert "password" in user
+        assert "id" in user
 
 
-def test_login(client):
-    import uuid
-
-    unique = str(uuid.uuid4())[:8]
-    username = f"testuser_{unique}"
-    email = f"{username}@example.com"
-    password = "Testpass123!"
-    # Register a unique user
-    payload = {"email": email, "username": username, "password": password}
-    response = client.post("/auth/register", json=payload)
-    assert response.status_code in (200, 201)
-    # Now attempt to log in with the same credentials
-    login_payload = {"username": username, "password": password}
+def test_login(client, registered_users):
+    # Use the first registered user to test login
+    user = registered_users[0]
+    login_payload = {"username": user["username"], "password": user["password"]}
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     login_response = client.post("/auth/login", data=login_payload, headers=headers)
     assert login_response.status_code in (200, 201)

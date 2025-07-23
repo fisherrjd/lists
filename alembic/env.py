@@ -24,19 +24,11 @@ if config.config_file_name is not None:
 # Load environment variables from .env
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
-# --- DB URL selection logic ---
-# 1. Use POSTGRES_* env vars if set
-# 2. Else, use alembic.ini
-
 db_url = None
-if os.getenv("POSTGRES_USER"):
-    db_url = (
-        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@"
-        f"{os.getenv('POSTGRES_HOST')}:{os.getenv('PGPORT')}/{os.getenv('POSTGRES_DB')}"
-    )
-if not db_url:
-    db_url = config.get_main_option("sqlalchemy.url")
 
+# --- DB URL selection logic ---
+# Always use the URL from alembic config (which can be overridden in tests)
+db_url = config.get_main_option("sqlalchemy.url")
 config.set_main_option("sqlalchemy.url", db_url)
 
 # Set target metadata
