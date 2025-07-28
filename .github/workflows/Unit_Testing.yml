@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: [ self-hosted lists-runner]
+    runs-on: [ self-hosted ]
 
     env:
       DATABASE_URL: "sqlite:///./pytest.db"
