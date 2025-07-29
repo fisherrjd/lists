@@ -42,3 +42,5 @@ client_secrets.json
 token.json
 client_task_secret.json
 task_token.json
+
+/tests/pytest.db
