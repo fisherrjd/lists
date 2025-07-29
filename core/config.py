@@ -8,22 +8,12 @@ class Settings(BaseSettings):
     server_port: int = 9000
     debug: bool = False
 
-    # Database config (secrets from .env or environment)
-    postgres_host: str
-    PGPORT: int
-    postgres_db: str
-    postgres_user: str
+    # Database config: pulls from .env or environment
+    database_url: str = "sqlite:///./lists.db"
 
-    # JWT config (secrets from .env or environment)
+    # JWT config
     secret_key: str
     algorithm: str = "HS256"
-
-    @property
-    def database_url(self) -> str:
-        return (
-            f"postgresql+psycopg2://{self.postgres_user}"
-            f"@{self.postgres_host}:{self.PGPORT}/{self.postgres_db}"
-        )
 
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
