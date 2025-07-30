@@ -33,10 +33,12 @@ def get_current_user(
         user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
+        # Convert user_id to UUID
+        user_id = UUID(user_id)
+        user = db.query(User).filter(User.id == user_id).first()
+        if user is None:
+            raise credentials_exception
     except Exception:
-        raise credentials_exception
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
         raise credentials_exception
     return user
 

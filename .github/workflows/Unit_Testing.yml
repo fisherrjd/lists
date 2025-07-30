@@ -1,0 +1,31 @@
+name: Py Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: [ubuntu-latest]
+
+    env:
+      DATABASE_URL: "sqlite:///./pytest.db"
+      postgres_host: "localhost"
+      PGPORT: "5432"
+      postgres_db: "test_db"
+      postgres_user: "test_user"
+      secret_key: "testsecretkey"
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install .
+      - name: Patch alembic.ini with DATABASE_URL
+        run: |
+          sed -i "s|^sqlalchemy.url =.*|sqlalchemy.url = ${DATABASE_URL}|" alembic.ini
+      - name: Run Alembic migrations
+        run: alembic upgrade head
+      - name: Run tests
+        run: pytest

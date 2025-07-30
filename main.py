@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from core.config import settings
-from api.v1 import task, auth, task_list
+from api.v1 import task, auth, task_list, share
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title=settings.app_name, debug=settings.debug)
@@ -17,6 +17,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(task.router)
 app.include_router(task_list.router)
+app.include_router(share.router)  # <-- Add this line
 
 
 @app.get("/")

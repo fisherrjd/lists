@@ -6,6 +6,11 @@ from uuid import UUID
 
 
 def create_list(db: Session, user_id: UUID, list_in: TaskListCreate) -> TaskList:
+    # Ensure user_id is a UUID object
+    if isinstance(user_id, str):
+        from uuid import UUID as UUID_type
+
+        user_id = UUID_type(user_id)
     new_list = TaskList(
         title=list_in.title, description=list_in.description, owner_id=user_id
     )
