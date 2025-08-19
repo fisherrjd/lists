@@ -23,7 +23,7 @@ class GroceryItem(SQLModel, table=True):
 
 
 # SQLite setup
-sqlite_file_name = "grocery.db"
+sqlite_file_name = "/app/dbdata/grocery.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=False)
 
